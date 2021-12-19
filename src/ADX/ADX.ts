@@ -1,10 +1,10 @@
-import {Big} from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {HighLowClose, HighLowCloseNumber} from '../util/HighLowClose';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterWSMA, WSMA} from '../WSMA/WSMA';
-import {DX, FasterDX} from '../DX/DX';
+import type {BigInstance} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/HighLowClose.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterWSMA, WSMA} from '../WSMA/WSMA.ts';
+import {DX, FasterDX} from '../DX/DX.ts';
 
 /**
  * Average Directional Index (ADX)
@@ -39,15 +39,15 @@ export class ADX extends BigIndicatorSeries<HighLowClose> {
     this.dx = new DX(interval, SmoothingIndicator);
   }
 
-  get mdi(): Big | void {
+  get mdi(): BigInstance | void {
     return this.dx.mdi;
   }
 
-  get pdi(): Big | void {
+  get pdi(): BigInstance | void {
     return this.dx.pdi;
   }
 
-  update(candle: HighLowClose): Big | void {
+  update(candle: HighLowClose): BigInstance | void {
     const result = this.dx.update(candle);
     if (result) {
       this.adx.update(result);

@@ -1,4 +1,4 @@
-import {BigSource} from 'big.js';
+import type {BigSource} from '../../deps.ts';
 
 export type HighLow = {high: BigSource; low: BigSource};
 

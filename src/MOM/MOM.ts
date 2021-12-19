@@ -1,6 +1,7 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import Big, {BigSource} from 'big.js';
-import {getFixedArray} from '../util/getFixedArray';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {getFixedArray} from '../util/getFixedArray.ts';
 
 /**
  * Momentum Indicator (MOM / MTM)
@@ -21,7 +22,7 @@ export class MOM extends BigIndicatorSeries {
     this.history = getFixedArray<BigSource>(this.historyLength);
   }
 
-  override update(value: BigSource): void | Big {
+  override update(value: BigSource): void | BigInstance {
     this.history.push(value);
     if (this.history.length === this.historyLength) {
       return this.setResult(new Big(value).minus(this.history[0]));

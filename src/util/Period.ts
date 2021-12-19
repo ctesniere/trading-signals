@@ -1,12 +1,13 @@
-import {Big, BigSource} from 'big.js';
-import {Indicator} from '../Indicator';
-import {getFixedArray} from './getFixedArray';
-import {getMinimum} from './getMinimum';
-import {getMaximum} from './getMaximum';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {Indicator} from '../Indicator.ts';
+import {getFixedArray} from './getFixedArray.ts';
+import {getMinimum} from './getMinimum.ts';
+import {getMaximum} from './getMaximum.ts';
 
 export interface PeriodResult {
-  highest: Big;
-  lowest: Big;
+  highest: BigInstance;
+  lowest: BigInstance;
 }
 
 export interface FasterPeriodResult {
@@ -15,14 +16,14 @@ export interface FasterPeriodResult {
 }
 
 export class Period implements Indicator<PeriodResult> {
-  public values: Big[];
+  public values: BigInstance[];
   /** Highest return value during the current period. */
-  public highest?: Big;
+  public highest?: BigInstance;
   /** Lowest return value during the current period. */
-  public lowest?: Big;
+  public lowest?: BigInstance;
 
   constructor(public readonly interval: number) {
-    this.values = getFixedArray<Big>(interval);
+    this.values = getFixedArray<BigInstance>(interval);
   }
 
   getResult(): PeriodResult {

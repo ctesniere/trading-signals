@@ -1,10 +1,11 @@
-import Big, {BigSource} from 'big.js';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
 
 /**
  * Return the mean / average value.
  */
-export function getAverage(values: BigSource[]): Big {
-  const sum = values.reduce((prev: Big, current: BigSource) => {
+export function getAverage(values: BigSource[]): BigInstance {
+  const sum = values.reduce((prev: BigInstance, current: BigSource) => {
     return prev.add(current);
   }, new Big(0));
 

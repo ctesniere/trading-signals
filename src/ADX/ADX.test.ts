@@ -1,4 +1,4 @@
-import {ADX, FasterADX} from './ADX';
+import {ADX, FasterADX} from './ADX.ts';
 
 describe('ADX', () => {
   describe('getResult', () => {

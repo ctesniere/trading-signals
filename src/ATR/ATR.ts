@@ -1,10 +1,10 @@
-import Big from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterTR, TR} from '../TR/TR';
-import {HighLowClose, HighLowCloseNumber} from '../util';
-import {FasterWSMA, WSMA} from '../WSMA/WSMA';
+import type {BigInstance} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/index.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterTR, TR} from '../TR/TR.ts';
+import {FasterWSMA, WSMA} from '../WSMA/WSMA.ts';
 
 /**
  * Average True Range (ATR)
@@ -26,7 +26,7 @@ export class ATR extends BigIndicatorSeries<HighLowClose> {
     this.smoothing = new SmoothingIndicator(interval);
   }
 
-  override update(candle: HighLowClose): Big | void {
+  override update(candle: HighLowClose): BigInstance | void {
     const trueRange = this.tr.update(candle);
     this.smoothing.update(trueRange);
     if (this.smoothing.isStable) {

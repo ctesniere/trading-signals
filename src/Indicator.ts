@@ -1,7 +1,7 @@
-import Big, {BigSource} from 'big.js';
-import {NotEnoughDataError} from './error';
+import type {BigInstance, BigSource} from '../deps.ts';
+import {NotEnoughDataError} from './error/index.ts';
 
-export interface Indicator<Result = Big, Input = BigSource> {
+export interface Indicator<Result = BigInstance, Input = BigSource> {
   getResult(): Result;
 
   isStable: boolean;
@@ -12,23 +12,23 @@ export interface Indicator<Result = Big, Input = BigSource> {
 /**
  * Tracks results of an indicator over time and memorizes the highest & lowest result.
  */
-export interface IndicatorSeries<Result = Big, Input = BigSource> extends Indicator<Result, Input> {
+export interface IndicatorSeries<Result = BigInstance, Input = BigSource> extends Indicator<Result, Input> {
   highest?: Result;
   lowest?: Result;
 }
 
-export abstract class BigIndicatorSeries<Input = BigSource> implements IndicatorSeries<Big, Input> {
+export abstract class BigIndicatorSeries<Input = BigSource> implements IndicatorSeries<BigInstance, Input> {
   /** Highest return value over the lifetime (not interval!) of the indicator. */
-  highest?: Big;
+  highest?: BigInstance;
   /** Lowest return value over the lifetime (not interval!) of the indicator. */
-  lowest?: Big;
-  protected result?: Big;
+  lowest?: BigInstance;
+  protected result?: BigInstance;
 
   get isStable(): boolean {
     return this.result !== undefined;
   }
 
-  getResult(): Big {
+  getResult(): BigInstance {
     if (this.result === undefined) {
       throw new NotEnoughDataError();
     }
@@ -36,7 +36,7 @@ export abstract class BigIndicatorSeries<Input = BigSource> implements Indicator
     return this.result;
   }
 
-  protected setResult(value: Big): Big {
+  protected setResult(value: BigInstance): BigInstance {
     if (this.highest === undefined || value.gt(this.highest)) {
       this.highest = value;
     }
@@ -48,7 +48,7 @@ export abstract class BigIndicatorSeries<Input = BigSource> implements Indicator
     return (this.result = value);
   }
 
-  abstract update(input: Input): void | Big;
+  abstract update(input: Input): void | BigInstance;
 }
 
 export abstract class NumberIndicatorSeries<Input = number> implements IndicatorSeries<number, Input> {

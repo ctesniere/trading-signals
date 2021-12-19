@@ -1,26 +1,26 @@
-import {AccelerationBands, FasterAccelerationBands} from './AccelerationBands';
-import {NotEnoughDataError} from '../error';
-import {SMA} from '../SMA/SMA';
-import {EMA} from '../EMA/EMA';
-import {HighLowCloseNumber} from '../util';
+import {asserts} from '../../deps.test.ts';
+import {AccelerationBands, FasterAccelerationBands} from './AccelerationBands.ts';
+import {NotEnoughDataError} from '../error/index.ts';
+import {SMA} from '../SMA/SMA.ts';
+import {EMA} from '../EMA/EMA.ts';
+import {HighLowCloseNumber} from '../util/index.ts';
 
-describe('AccelerationBands', () => {
-  describe('constructor', () => {
-    it('works with different kinds of indicators', () => {
+Deno.test('AccelerationBands', async function (t) {
+  await t.step('constructor', async function (t) {
+    await t.step('works with different kinds of indicators', () => {
       const accBandsWithSMA = new AccelerationBands(20, 2, SMA);
       const accBandsWithEMA = new AccelerationBands(20, 2, EMA);
-      expect(accBandsWithSMA).toBeDefined();
-      expect(accBandsWithEMA).toBeDefined();
+      asserts.assertExists(accBandsWithSMA);
+      asserts.assertExists(accBandsWithEMA);
     });
   });
-
-  describe('getResult', () => {
-    it('returns upper, middle and lower bands', () => {
+  await t.step('getResult', async function (t) {
+    await t.step('returns upper, middle and lower bands', function () {
       const accBands = new AccelerationBands(20, 4);
-      expect(accBands.isStable).toBe(false);
 
+      asserts.assertEquals(accBands.isStable, false);
       const fasterAccBands = new FasterAccelerationBands(20, 4);
-      expect(fasterAccBands.isStable).toBe(false);
+      asserts.assertEquals(fasterAccBands.isStable, false);
 
       // Test data from: https://github.com/QuantConnect/Lean/blob/master/Tests/TestData/spy_acceleration_bands_20_4.txt
       const candles = [
@@ -45,62 +45,55 @@ describe('AccelerationBands', () => {
         {close: 191.63, high: 191.83, low: 189.44, open: 190.4},
         {close: 192.13, high: 192.49, low: 189.82, open: 192.03},
       ];
-
       for (const candle of candles) {
         const {close, high, low} = candle;
         accBands.update({close, high, low});
         fasterAccBands.update({close, high, low});
       }
-
       let result = accBands.getResult();
       let fasterResult = fasterAccBands.getResult();
-
       // See: https://github.com/QuantConnect/Lean/blob/master/Tests/TestData/spy_acceleration_bands_20_4.txt#L21
-      expect(accBands.isStable).toBe(true);
-      expect(fasterAccBands.isStable).toBe(true);
 
-      expect(result.lower.toFixed(4)).toBe('187.6891');
-      expect(fasterResult.lower.toFixed(4)).toBe('187.6891');
+      asserts.assertEquals(accBands.isStable, true);
+      asserts.assertEquals(fasterAccBands.isStable, true);
 
-      expect(result.middle.toFixed(4)).toBe('194.6195');
-      expect(fasterResult.middle.toFixed(4)).toBe('194.6195');
+      asserts.assertEquals(result.lower.toFixed(4), '187.6891');
+      asserts.assertEquals(fasterResult.lower.toFixed(4), '187.6891');
 
-      expect(result.upper.toFixed(4)).toBe('201.8016');
-      expect(fasterResult.upper.toFixed(4)).toBe('201.8016');
+      asserts.assertEquals(result.middle.toFixed(4), '194.6195');
+      asserts.assertEquals(fasterResult.middle.toFixed(4), '194.6195');
+
+      asserts.assertEquals(result.upper.toFixed(4), '201.8016');
+      asserts.assertEquals(fasterResult.upper.toFixed(4), '201.8016');
 
       // See: https://github.com/QuantConnect/Lean/blob/master/Tests/TestData/spy_acceleration_bands_20_4.txt#L22
       const candle: HighLowCloseNumber = {close: 195, high: 195.03, low: 189.12};
       accBands.update(candle);
       fasterAccBands.update(candle);
-
       result = accBands.getResult();
       fasterResult = fasterAccBands.getResult();
-
-      expect(result.lower.toFixed(4)).toBe('187.1217');
-      expect(fasterResult.lower.toFixed(4)).toBe('187.1217');
-
-      expect(result.middle.toFixed(4)).toBe('194.5920');
-      expect(fasterResult.middle.toFixed(4)).toBe('194.5920');
-
-      expect(result.upper.toFixed(4)).toBe('201.9392');
-      expect(fasterResult.upper.toFixed(4)).toBe('201.9392');
+      asserts.assertEquals(result.lower.toFixed(4), '187.1217');
+      asserts.assertEquals(fasterResult.lower.toFixed(4), '187.1217');
+      asserts.assertEquals(result.middle.toFixed(4), '194.5920');
+      asserts.assertEquals(fasterResult.middle.toFixed(4), '194.5920');
+      asserts.assertEquals(result.upper.toFixed(4), '201.9392');
+      asserts.assertEquals(fasterResult.upper.toFixed(4), '201.9392');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', function (t) {
       const accBands = new AccelerationBands(20, 2);
       try {
         accBands.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
-
       const fasterAccBands = new FasterAccelerationBands(20, 2);
       try {
         fasterAccBands.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

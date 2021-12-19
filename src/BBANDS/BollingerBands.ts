@@ -1,9 +1,10 @@
-import Big, {BigSource} from 'big.js';
-import {SMA} from '../SMA/SMA';
-import {NotEnoughDataError} from '../error';
-import {BandsResult, FasterBandsResult} from '../util/BandsResult';
-import {Indicator} from '../Indicator';
-import {getFasterAverage, getFasterStandardDeviation, getStandardDeviation} from '../util';
+import type {BandsResult, FasterBandsResult} from '../util/BandsResult.ts';
+import type {BigSource, BigInstance} from '../../deps.ts';
+import type {Indicator} from '../Indicator.ts';
+import Big from '../../deps.ts';
+import {SMA} from '../SMA/SMA.ts';
+import {NotEnoughDataError} from '../error/index.ts';
+import {getFasterAverage, getFasterStandardDeviation, getStandardDeviation} from '../util/index.ts';
 
 /**
  * Bollinger Bands (BBANDS)
@@ -21,7 +22,7 @@ import {getFasterAverage, getFasterStandardDeviation, getStandardDeviation} from
  * @see https://www.investopedia.com/terms/b/bollingerbands.asp
  */
 export class BollingerBands implements Indicator<BandsResult> {
-  public readonly prices: Big[] = [];
+  public readonly prices: BigInstance[] = [];
   private result: BandsResult | undefined;
 
   /**

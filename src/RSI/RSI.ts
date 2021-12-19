@@ -1,8 +1,9 @@
-import Big, {BigSource} from 'big.js';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterWSMA, WSMA} from '../WSMA/WSMA';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterWSMA, WSMA} from '../WSMA/WSMA.ts';
 
 /**
  * Relative Strength Index (RSI)
@@ -33,7 +34,7 @@ export class RSI extends BigIndicatorSeries {
     this.avgLoss = new SmoothingIndicator(this.interval);
   }
 
-  override update(price: BigSource): void | Big {
+  override update(price: BigSource): void | BigInstance {
     if (!this.previousPrice) {
       // At least 2 prices are required to do a calculation
       this.previousPrice = price;

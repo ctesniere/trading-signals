@@ -1,6 +1,7 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import Big, {BigSource} from 'big.js';
-import {FasterSMA, SMA} from '../SMA/SMA';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
 
 /**
  * Center of Gravity (CG)
@@ -18,7 +19,7 @@ import {FasterSMA, SMA} from '../SMA/SMA';
 export class CG extends BigIndicatorSeries {
   public signal: SMA;
 
-  public readonly prices: Big[] = [];
+  public readonly prices: BigInstance[] = [];
 
   override get isStable(): boolean {
     return this.signal.isStable;
@@ -29,7 +30,7 @@ export class CG extends BigIndicatorSeries {
     this.signal = new SMA(signalInterval);
   }
 
-  override update(price: BigSource): void | Big {
+  override update(price: BigSource): void | BigInstance {
     this.prices.push(new Big(price));
 
     if (this.prices.length > this.interval) {

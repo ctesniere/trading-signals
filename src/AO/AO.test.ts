@@ -1,6 +1,6 @@
-import {AO, FasterAO} from './AO';
-import {NotEnoughDataError} from '../error';
-import {HighLowNumber} from '../util';
+import {AO, FasterAO} from './AO.ts';
+import {NotEnoughDataError} from '../error/index.ts';
+import {HighLowNumber} from '../util/index.ts';
 
 describe('AO', () => {
   describe('getResult', () => {

@@ -1,9 +1,10 @@
-import {ATR, FasterATR} from './ATR';
-import {NotEnoughDataError} from '..';
+import {asserts} from '../../deps.test.ts';
+import {ATR, FasterATR} from './ATR.ts';
+import {NotEnoughDataError} from '../index.ts';
 
-describe('ATR', () => {
-  describe('getResult', () => {
-    it('calculates the Average True Range (ATR)', () => {
+Deno.test('ATR', async function (t) {
+  await t.step('getResult', async function (t) {
+    await t.step('calculates the Average True Range (ATR)', async function () {
       // Test data verified with:
       // https://tulipindicators.org/atr
       const candles = [
@@ -33,32 +34,32 @@ describe('ATR', () => {
         fasterATR.update(candle);
         if (atr.isStable && fasterATR.isStable) {
           const expected = expectations.shift();
-          expect(atr.getResult().toFixed(2)).toBe(expected!);
-          expect(fasterATR.getResult().toFixed(2)).toBe(expected!);
+          asserts.assertEquals(atr.getResult().toFixed(2), expected!);
+          asserts.assertEquals(fasterATR.getResult().toFixed(2), expected!);
         }
       }
 
-      expect(atr.isStable).toBe(true);
-      expect(fasterATR.isStable).toBe(true);
+      asserts.assertEquals(atr.isStable, true);
+      asserts.assertEquals(fasterATR.isStable, true);
 
-      expect(atr.getResult().toFixed(2)).toBe('1.14');
-      expect(fasterATR.getResult().toFixed(2)).toBe('1.14');
+      asserts.assertEquals(atr.getResult().toFixed(2), '1.14');
+      asserts.assertEquals(fasterATR.getResult().toFixed(2), '1.14');
 
-      expect(atr.lowest!.toFixed(2)).toBe('1.01');
-      expect(fasterATR.lowest!.toFixed(2)).toBe('1.01');
+      asserts.assertEquals(atr.lowest!.toFixed(2), '1.01');
+      asserts.assertEquals(fasterATR.lowest!.toFixed(2), '1.01');
 
-      expect(atr.highest!.toFixed(2)).toBe('1.24');
-      expect(fasterATR.highest!.toFixed(2)).toBe('1.24');
+      asserts.assertEquals(atr.highest!.toFixed(2), '1.24');
+      asserts.assertEquals(fasterATR.highest!.toFixed(2), '1.24');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', async function () {
       const atr = new ATR(14);
 
       try {
         atr.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

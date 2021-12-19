@@ -1,7 +1,9 @@
-import {EMA, FasterEMA} from '../EMA/EMA';
-import Big, {BigSource} from 'big.js';
-import {DEMA, FasterDEMA, NotEnoughDataError} from '..';
-import {Indicator} from '../Indicator';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import type {EMA, FasterEMA} from '../EMA/EMA.ts';
+import type {DEMA, FasterDEMA} from '../DEMA/DEMA.ts';
+import type {Indicator} from '../Indicator.ts';
+import Big from '../../deps.ts';
+import {NotEnoughDataError} from '../index.ts';
 
 export type MACDConfig = {
   indicator: typeof EMA | typeof DEMA;
@@ -11,9 +13,9 @@ export type MACDConfig = {
 };
 
 export type MACDResult = {
-  histogram: Big;
-  macd: Big;
-  signal: Big;
+  histogram: BigInstance;
+  macd: BigInstance;
+  signal: BigInstance;
 };
 
 export type FasterMACDResult = {

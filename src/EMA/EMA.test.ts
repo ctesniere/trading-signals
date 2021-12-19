@@ -1,4 +1,5 @@
-import {EMA, FasterEMA, NotEnoughDataError} from '..';
+import {asserts} from '../../deps.test.ts';
+import {EMA, FasterEMA, NotEnoughDataError} from '../index.ts';
 
 describe('EMA', () => {
   // Test data verified with:

@@ -1,9 +1,10 @@
-import {FasterRSI, RSI} from './RSI';
-import {NotEnoughDataError} from '../error';
+import {asserts} from '../../deps.test.ts';
+import {FasterRSI, RSI} from './RSI.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
-describe('RSI', () => {
-  describe('getResult', () => {
-    it('calculates the relative strength index', () => {
+Deno.test('RSI', async function (t) {
+  await t.step('getResult', async function (t) {
+    await t.step('calculates the relative strength index', function () {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/untest.txt#L347-L349
       const prices = [
@@ -28,47 +29,49 @@ describe('RSI', () => {
         fasterRSI.update(price);
         if (rsi.isStable && fasterRSI.isStable) {
           const expected = expectations.shift();
-          expect(rsi.getResult().toFixed(3)).toBe(expected!);
-          expect(fasterRSI.getResult().toFixed(3)).toBe(expected!);
+          asserts.assertEquals(rsi.getResult().toFixed(3), expected!);
+          asserts.assertEquals(fasterRSI.getResult().toFixed(3), expected!);
         }
       }
-      expect(rsi.isStable).toBe(true);
-      expect(fasterRSI.isStable).toBe(true);
 
-      expect(rsi.getResult().toFixed(2)).toBe('78.50');
-      expect(fasterRSI.getResult().toFixed(2)).toBe('78.50');
+      asserts.assertEquals(rsi.isStable, true);
+      asserts.assertEquals(fasterRSI.isStable, true);
 
-      expect(rsi.lowest?.toFixed(2)).toBe('64.93');
-      expect(fasterRSI.lowest?.toFixed(2)).toBe('64.93');
+      asserts.assertEquals(rsi.getResult().toFixed(2), '78.50');
+      asserts.assertEquals(fasterRSI.getResult().toFixed(2), '78.50');
 
-      expect(rsi.highest?.toFixed(2)).toBe('91.48');
-      expect(fasterRSI.highest?.toFixed(2)).toBe('91.48');
+      asserts.assertEquals(rsi.lowest?.toFixed(2), '64.93');
+      asserts.assertEquals(fasterRSI.lowest?.toFixed(2), '64.93');
+
+      asserts.assertEquals(rsi.highest?.toFixed(2), '91.48');
+      asserts.assertEquals(fasterRSI.highest?.toFixed(2), '91.48');
     });
 
-    it('catches division by zero errors', () => {
+    await t.step('catches division by zero errors', function () {
       const rsi = new RSI(2);
       rsi.update(2);
       rsi.update(2);
       rsi.update(2);
-      expect(rsi.getResult().valueOf()).toBe('100');
+      asserts.assertEquals(rsi.getResult().valueOf(), '100');
 
       const fasterRSI = new FasterRSI(2);
       fasterRSI.update(2);
       fasterRSI.update(2);
       fasterRSI.update(2);
-      expect(fasterRSI.getResult().valueOf()).toBe(100);
+      asserts.assertEquals(fasterRSI.getResult().valueOf(), 100);
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', function () {
       const rsi = new RSI(2);
       rsi.update(0);
-      expect(rsi.isStable).toBe(false);
+      asserts.assertEquals(rsi.isStable, false);
+
       try {
         rsi.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(rsi.isStable).toBe(false);
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(rsi.isStable, false);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

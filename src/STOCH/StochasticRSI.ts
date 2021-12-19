@@ -1,9 +1,10 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {FasterRSI, RSI} from '../RSI/RSI';
-import Big, {BigSource} from 'big.js';
-import {FasterPeriod, Period} from '../util/Period';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterWSMA, WSMA} from '../WSMA/WSMA';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterRSI, RSI} from '../RSI/RSI.ts';
+import {FasterPeriod, Period} from '../util/Period.ts';
+import {FasterWSMA, WSMA} from '../WSMA/WSMA.ts';
 
 /**
  * Stochastic RSI (STOCHRSI)
@@ -30,7 +31,7 @@ export class StochasticRSI extends BigIndicatorSeries {
     this.rsi = new RSI(interval, SmoothingIndicator);
   }
 
-  override update(price: BigSource): void | Big {
+  override update(price: BigSource): void | BigInstance {
     const rsiResult = this.rsi.update(price);
     if (rsiResult) {
       const periodResult = this.period.update(rsiResult);

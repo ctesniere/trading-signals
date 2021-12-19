@@ -1,28 +1,29 @@
-import {BollingerBands, FasterBollingerBands} from './BollingerBands';
-import {Big} from 'big.js';
-import data from '../test/fixtures/BB/data.json';
-import {NotEnoughDataError} from '../error';
+import {asserts} from '../../deps.test.ts';
+import {BollingerBands, FasterBollingerBands} from './BollingerBands.ts';
+import Big from '../../deps.ts';
+import data from '../test/fixtures/BB/data.js';
+import {NotEnoughDataError} from '../error/index.ts';
 
-describe('BollingerBands', () => {
-  describe('prices', () => {
-    it('does not cache more prices than necessary to fill the interval', () => {
+Deno.test('BollingerBands', async function (t) {
+  await t.step('prices', async function (t) {
+    await t.step('does not cache more prices than necessary to fill the interval', function () {
       const bb = new BollingerBands(3);
       bb.update(1);
       bb.update(2);
-      expect(bb.prices.length).toBe(2);
+      asserts.assertEquals(bb.prices.length, 2);
       bb.update(3);
-      expect(bb.prices.length).toBe(3);
+      asserts.assertEquals(bb.prices.length, 3);
       bb.update(4);
-      expect(bb.prices.length).toBe(3);
+      asserts.assertEquals(bb.prices.length, 3);
       bb.update(5);
-      expect(bb.prices.length).toBe(3);
+      asserts.assertEquals(bb.prices.length, 3);
       bb.update(6);
-      expect(bb.prices.length).toBe(3);
+      asserts.assertEquals(bb.prices.length, 3);
     });
   });
 
-  describe('getResult', () => {
-    it('calculates Bollinger Bands with interval 20', () => {
+  await t.step('getResult', async function (t) {
+    await t.step('calculates Bollinger Bands with interval 20', function () {
       const bb = new BollingerBands(20);
 
       data.prices.forEach((price, index) => {
@@ -38,30 +39,27 @@ describe('BollingerBands', () => {
 
         const {middle, upper, lower} = bb.getResult();
 
-        expect(middle.toPrecision(12)).toEqual(resMiddle.toPrecision(12));
-        expect(lower.toPrecision(12)).toEqual(resLower.toPrecision(12));
-        expect(upper.toPrecision(12)).toEqual(resUpper.toPrecision(12));
+        asserts.assertEquals(middle.toPrecision(12), resMiddle.toPrecision(12));
+        asserts.assertEquals(lower.toPrecision(12), resLower.toPrecision(12));
+        asserts.assertEquals(upper.toPrecision(12), resUpper.toPrecision(12));
       });
     });
-
-    it('has a default standard deviation multiplier configuration', () => {
+    await t.step('has a default standard deviation multiplier configuration', function () {
       const bb = new BollingerBands(5);
-      expect(bb.interval).toBe(5);
-      expect(bb.deviationMultiplier).toBe(2);
+      asserts.assertEquals(bb.interval, 5);
+      asserts.assertEquals(bb.deviationMultiplier, 2);
     });
-
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', function () {
       const bb = new BollingerBands(20);
 
       try {
         bb.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
-
-    it('is compatible with results from Tulip Indicators (TI)', () => {
+    await t.step('is compatible with results from Tulip Indicators (TI)', function () {
       // Test data verified with:
       // https://tulipindicators.org/bbands
       const inputs = [
@@ -132,18 +130,18 @@ describe('BollingerBands', () => {
           const expectedLow = expectedLows[i];
           const expectedMid = expectedMids[i];
           const expectedUp = expectedUps[i];
-          expect(lower.toFixed(2)).toBe(`${expectedLow}`);
-          expect(middle.toFixed(2)).toBe(`${expectedMid}`);
-          expect(upper.toFixed(2)).toBe(`${expectedUp}`);
+          asserts.assertEquals(lower.toFixed(2), `${expectedLow}`);
+          asserts.assertEquals(middle.toFixed(2), `${expectedMid}`);
+          asserts.assertEquals(upper.toFixed(2), `${expectedUp}`);
         }
       }
     });
   });
 });
 
-describe('FasterBollingerBands', () => {
-  describe('getResult', () => {
-    it('only works with plain numbers', () => {
+Deno.test('FasterBollingerBands', async function (t) {
+  await t.step('getResult', async function (t) {
+    await t.step('only works with plain numbers', function () {
       // Test data verified with:
       // https://tulipindicators.org/bbands
       const prices = [
@@ -153,21 +151,22 @@ describe('FasterBollingerBands', () => {
       for (const price of prices) {
         fasterBB.update(price);
       }
-      expect(fasterBB.isStable).toBe(true);
+
+      asserts.assertEquals(fasterBB.isStable, true);
+
       const actual = fasterBB.getResult();
-      expect(actual.lower.toFixed(2)).toBe('85.29');
-      expect(actual.middle.toFixed(2)).toBe('86.80');
-      expect(actual.upper.toFixed(2)).toBe('88.32');
+      asserts.assertEquals(actual.lower.toFixed(2), '85.29');
+      asserts.assertEquals(actual.middle.toFixed(2), '86.80');
+      asserts.assertEquals(actual.upper.toFixed(2), '88.32');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', function () {
       const fasterBB = new FasterBollingerBands(5);
-
       try {
         fasterBB.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

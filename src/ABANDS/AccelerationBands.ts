@@ -1,11 +1,11 @@
-import {FasterSMA, SMA} from '../SMA/SMA';
-import Big from 'big.js';
-import {NotEnoughDataError} from '../error';
-import {BandsResult, FasterBandsResult} from '../util/BandsResult';
-import {Indicator} from '../Indicator';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {HighLowClose, HighLowCloseNumber} from '../util';
+import type {BandsResult, FasterBandsResult} from '../util/BandsResult.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/index.ts';
+import type {Indicator} from '../Indicator.ts';
+import Big from '../../deps.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 export class AccelerationBands implements Indicator<BandsResult, HighLowClose> {
   private readonly lowerBand: MovingAverage;

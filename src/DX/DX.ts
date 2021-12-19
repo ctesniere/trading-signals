@@ -1,10 +1,11 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {HighLowClose, HighLowCloseNumber} from '../util';
-import Big, {BigSource} from 'big.js';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterWSMA, WSMA} from '../WSMA/WSMA';
-import {ATR, FasterATR} from '../ATR/ATR';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/index.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterWSMA, WSMA} from '../WSMA/WSMA.ts';
+import {ATR, FasterATR} from '../ATR/ATR.ts';
 
 /**
  * Directional Movement Index (DMI / DX)
@@ -25,9 +26,9 @@ export class DX extends BigIndicatorSeries<HighLowClose> {
   private previousCandle?: HighLowClose;
   private readonly atr: ATR;
   /** Minus Directional Indicator (-DI) */
-  public mdi?: Big;
+  public mdi?: BigInstance;
   /** Plus Directional Indicator (+DI) */
-  public pdi?: Big;
+  public pdi?: BigInstance;
 
   constructor(public readonly interval: number, SmoothingIndicator: MovingAverageTypes = WSMA) {
     super();
@@ -43,7 +44,7 @@ export class DX extends BigIndicatorSeries<HighLowClose> {
     this.previousCandle = candle;
   }
 
-  update(candle: HighLowClose): Big | void {
+  update(candle: HighLowClose): BigInstance | void {
     if (!this.previousCandle) {
       this.updateState(candle);
       return;

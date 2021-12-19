@@ -1,9 +1,10 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import Big from 'big.js';
-import {FasterSMA, SMA} from '../SMA/SMA';
-import {HighLow, HighLowNumber} from '../util';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
+import type {BigInstance} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {HighLow, HighLowNumber} from '../util/index.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
 
 /**
  * Awesome Oscillator (AO)
@@ -33,7 +34,7 @@ export class AO extends BigIndicatorSeries<HighLow> {
     this.long = new SmoothingIndicator(longInterval);
   }
 
-  override update({low, high}: HighLow): void | Big {
+  override update({low, high}: HighLow): void | BigInstance {
     const candleSum = new Big(low).add(high);
     const medianPrice = candleSum.div(2);
 

@@ -1,5 +1,5 @@
-import {FasterWSMA, WSMA} from './WSMA';
-import {NotEnoughDataError} from '../error';
+import {FasterWSMA, WSMA} from './WSMA.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 describe('WSMA', () => {
   describe('getResult', () => {

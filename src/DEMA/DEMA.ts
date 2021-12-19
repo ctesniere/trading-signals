@@ -1,6 +1,6 @@
-import Big, {BigSource} from 'big.js';
-import {EMA, FasterEMA} from '../EMA/EMA';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import {EMA, FasterEMA} from '../EMA/EMA.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
 
 /**
  * Double Exponential Moving Average (DEMA)
@@ -22,7 +22,7 @@ export class DEMA extends BigIndicatorSeries {
     this.outer = new EMA(interval);
   }
 
-  override update(price: BigSource): Big {
+  override update(price: BigSource): BigInstance {
     const innerResult = this.inner.update(price);
     const outerResult = this.outer.update(innerResult);
     return this.setResult(innerResult.times(2).sub(outerResult));

@@ -1,6 +1,6 @@
-import twoDays from '../test/fixtures/DMA/LTC-USDT-1h-2d.json';
-import {DMA, FasterDMA} from './DMA';
-import {EMA, SMA} from '..';
+import twoDays from '../test/fixtures/DMA/LTC-USDT-1h-2d.js';
+import {DMA, FasterDMA} from './DMA.ts';
+import {EMA, SMA} from '../index.ts';
 
 describe('DMA', () => {
   describe('constructor', () => {

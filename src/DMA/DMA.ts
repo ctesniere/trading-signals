@@ -1,10 +1,10 @@
-import Big, {BigSource} from 'big.js';
-import {Indicator} from '../Indicator';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes';
-import {FasterSMA, SMA} from '../SMA/SMA';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import type {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import type {FasterMovingAverageTypes, MovingAverageTypes} from '../MA/MovingAverageTypes.ts';
+import type {Indicator} from '../Indicator.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
 
-export type DMAResult = {long: Big; short: Big};
+export type DMAResult = {long: BigInstance; short: BigInstance};
 
 export interface FasterDMAResult {
   long: number;

@@ -1,5 +1,6 @@
-import Big, {BigSource} from 'big.js';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
 
 /**
  * Simple Moving Average (SMA)
@@ -13,7 +14,7 @@ import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
 export class SMA extends MovingAverage {
   public readonly prices: BigSource[] = [];
 
-  override update(price: BigSource): Big | void {
+  override update(price: BigSource): BigInstance | void {
     this.prices.push(price);
 
     if (this.prices.length > this.interval) {
@@ -25,14 +26,14 @@ export class SMA extends MovingAverage {
     }
   }
 
-  static getResultFromBatch(prices: BigSource[]): Big {
-    const sum = prices.reduce((a: Big, b: BigSource) => a.plus(b), new Big('0'));
+  static getResultFromBatch(prices: BigSource[]): BigInstance {
+    const sum = prices.reduce((a: BigInstance, b: BigSource) => a.plus(b), new Big('0'));
     return sum.div(prices.length || 1);
   }
 }
 
 export class FasterSMA extends FasterMovingAverage {
-  protected result?: number;
+  protected declare result?: number;
   public readonly prices: number[] = [];
 
   update(price: number): void | number {

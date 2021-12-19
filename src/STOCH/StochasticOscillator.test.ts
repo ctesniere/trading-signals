@@ -1,5 +1,5 @@
-import {FasterStochasticOscillator, StochasticOscillator} from './StochasticOscillator';
-import {NotEnoughDataError} from '../error';
+import {FasterStochasticOscillator, StochasticOscillator} from './StochasticOscillator.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 describe('StochasticOscillator', () => {
   describe('update', () => {

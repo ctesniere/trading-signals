@@ -1,8 +1,9 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {Big, BigSource} from 'big.js';
-import {HighLowClose, HighLowCloseNumber} from '../util';
-import {FasterSMA, SMA} from '../SMA/SMA';
-import {FasterMAD, MAD} from '../MAD/MAD';
+import type {BigSource, BigInstance} from '../../deps.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/index.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
+import {FasterMAD, MAD} from '../MAD/MAD.ts';
 
 /**
  * Commodity Channel Index (CCI)
@@ -22,16 +23,16 @@ import {FasterMAD, MAD} from '../MAD/MAD';
  */
 export class CCI extends BigIndicatorSeries<HighLowClose> {
   public readonly prices: BigSource[] = [];
-  protected result?: Big;
+  protected declare result?: BigInstance;
   private readonly sma: SMA;
-  private readonly typicalPrices: Big[] = [];
+  private readonly typicalPrices: BigInstance[] = [];
 
   constructor(public readonly interval: number) {
     super();
     this.sma = new SMA(this.interval);
   }
 
-  update(candle: HighLowClose): void | Big {
+  update(candle: HighLowClose): void | BigInstance {
     const typicalPrice = this.cacheTypicalPrice(candle);
     this.sma.update(typicalPrice);
     if (this.sma.isStable) {
@@ -43,7 +44,7 @@ export class CCI extends BigIndicatorSeries<HighLowClose> {
     }
   }
 
-  private cacheTypicalPrice({high, low, close}: HighLowClose): Big {
+  private cacheTypicalPrice({high, low, close}: HighLowClose): BigInstance {
     const typicalPrice = new Big(high).plus(low).plus(close).div(3);
     this.typicalPrices.push(typicalPrice);
     if (this.typicalPrices.length > this.interval) {
@@ -55,7 +56,7 @@ export class CCI extends BigIndicatorSeries<HighLowClose> {
 
 export class FasterCCI extends NumberIndicatorSeries<HighLowCloseNumber> {
   public readonly prices: number[] = [];
-  protected result?: number;
+  protected declare result?: number;
   private readonly sma: FasterSMA;
   private readonly typicalPrices: number[] = [];
 

@@ -1,9 +1,9 @@
-import Big from 'big.js';
+import type {BigInstance} from '../../deps.ts';
 
 export interface BandsResult {
-  lower: Big;
-  middle: Big;
-  upper: Big;
+  lower: BigInstance;
+  middle: BigInstance;
+  upper: BigInstance;
 }
 
 export interface FasterBandsResult {

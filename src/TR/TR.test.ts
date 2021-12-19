@@ -1,4 +1,4 @@
-import {FasterTR, TR} from './TR';
+import {FasterTR, TR} from './TR.ts';
 
 describe('TR', () => {
   // Test data verified with:

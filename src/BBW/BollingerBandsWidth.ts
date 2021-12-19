@@ -1,6 +1,6 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {Big, BigSource} from 'big.js';
-import {BollingerBands, FasterBollingerBands} from '../BBANDS/BollingerBands';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {BollingerBands, FasterBollingerBands} from '../BBANDS/BollingerBands.ts';
 
 /**
  * The Bollinger Bands Width (BBW) indicator, developed by John A. Bollinger, merges the information of Bollinger Bands
@@ -14,7 +14,7 @@ export class BollingerBandsWidth extends BigIndicatorSeries {
     super();
   }
 
-  override update(price: BigSource): void | Big {
+  override update(price: BigSource): void | BigInstance {
     const result = this.bollingerBands.update(price);
     if (result) {
       return this.setResult(result.upper.minus(result.lower).div(result.middle));

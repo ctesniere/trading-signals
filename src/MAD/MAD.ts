@@ -1,6 +1,7 @@
-import {Big, BigSource} from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {getAverage, getFasterAverage} from '../util';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {getAverage, getFasterAverage} from '../util/index.ts';
 
 /**
  * Mean Absolute Deviation (MAD)
@@ -18,7 +19,7 @@ export class MAD extends BigIndicatorSeries {
     super();
   }
 
-  override update(price: BigSource): void | Big {
+  override update(price: BigSource): void | BigInstance {
     this.prices.push(price);
 
     if (this.prices.length > this.interval) {
@@ -30,7 +31,7 @@ export class MAD extends BigIndicatorSeries {
     }
   }
 
-  static getResultFromBatch(prices: BigSource[], average?: BigSource): Big {
+  static getResultFromBatch(prices: BigSource[], average?: BigSource): BigInstance {
     const mean = average || getAverage(prices);
     let sum = new Big(0);
     for (let i = 0; i < prices.length; i++) {

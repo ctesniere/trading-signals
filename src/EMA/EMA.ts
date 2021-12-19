@@ -1,6 +1,7 @@
-import Big, {BigSource} from 'big.js';
-import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage';
-import {NotEnoughDataError} from '../error';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {FasterMovingAverage, MovingAverage} from '../MA/MovingAverage.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 /**
  * Exponential Moving Average (EMA)
@@ -19,7 +20,7 @@ export class EMA extends MovingAverage {
     this.weightFactor = 2 / (this.interval + 1);
   }
 
-  update(_price: BigSource): Big {
+  update(_price: BigSource): BigInstance {
     this.pricesCounter++;
     const price = new Big(_price);
 
@@ -31,7 +32,7 @@ export class EMA extends MovingAverage {
     return this.setResult(price.times(this.weightFactor).add(this.result.times(1 - this.weightFactor)));
   }
 
-  override getResult(): Big {
+  override getResult(): BigInstance {
     if (this.pricesCounter < this.interval) {
       throw new NotEnoughDataError();
     }

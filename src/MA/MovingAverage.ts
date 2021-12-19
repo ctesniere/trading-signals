@@ -1,5 +1,5 @@
-import Big, {BigSource} from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
 
 /**
  * Moving Average (MA)
@@ -14,7 +14,7 @@ export abstract class MovingAverage extends BigIndicatorSeries {
     super();
   }
 
-  abstract update(price: BigSource): Big | void;
+  abstract update(price: BigSource): BigInstance | void;
 }
 
 export abstract class FasterMovingAverage extends NumberIndicatorSeries {

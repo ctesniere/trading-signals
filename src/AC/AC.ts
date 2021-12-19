@@ -1,9 +1,9 @@
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import Big from 'big.js';
-import {AO, FasterAO} from '../AO/AO';
-import {FasterSMA, SMA} from '../SMA/SMA';
-import {FasterMOM, MOM} from '../MOM/MOM';
-import {HighLow, HighLowNumber} from '../util';
+import type {BigInstance} from '../../deps.ts';
+import type {HighLow, HighLowNumber} from '../util/index.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {AO, FasterAO} from '../AO/AO.ts';
+import {FasterSMA, SMA} from '../SMA/SMA.ts';
+import {FasterMOM, MOM} from '../MOM/MOM.ts';
 
 /**
  * Accelerator Oscillator (AC)
@@ -29,7 +29,7 @@ export class AC extends BigIndicatorSeries<HighLow> {
     this.signal = new SMA(signalInterval);
   }
 
-  override update(input: HighLow): void | Big {
+  override update(input: HighLow): void | BigInstance {
     const ao = this.ao.update(input);
     if (ao) {
       this.signal.update(ao);

@@ -1,5 +1,6 @@
-import Big, {BigSource} from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
+import type {BigInstance, BigSource} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
 
 /**
  * Rate Of Change Indicator (ROC)
@@ -11,13 +12,13 @@ import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
  * @see https://www.investopedia.com/terms/r/rateofchange.asp
  */
 export class ROC extends BigIndicatorSeries {
-  public readonly prices: Big[] = [];
+  public readonly prices: BigInstance[] = [];
 
   constructor(public readonly interval: number) {
     super();
   }
 
-  override update(price: BigSource): Big | void {
+  override update(price: BigSource): BigInstance | void {
     this.prices.push(new Big(price));
 
     /**

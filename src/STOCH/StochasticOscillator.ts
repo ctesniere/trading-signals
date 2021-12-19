@@ -1,16 +1,18 @@
-import {Indicator} from '../Indicator';
-import Big from 'big.js';
-import {FasterSMA, SMA} from '../SMA/SMA';
-import {getMaximum} from '../util/getMaximum';
-import {getMinimum} from '../util/getMinimum';
-import {NotEnoughDataError} from '../error';
-import {HighLowClose, HighLowCloseNumber} from '../util';
+import type {BigInstance} from '../../deps.ts';
+import type {HighLowClose, HighLowCloseNumber} from '../util/HighLowClose.ts';
+import type {Indicator} from '../Indicator.ts';
+import Big from '../../deps.ts';
+
+import {SMA, FasterSMA} from '../SMA/SMA.ts';
+import {getMaximum} from '../util/getMaximum.ts';
+import {getMinimum} from '../util/getMinimum.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 export interface StochasticResult {
   /** Slow stochastic indicator (%D) */
-  stochD: Big;
+  stochD: BigInstance;
   /** Fast stochastic indicator (%K) */
-  stochK: Big;
+  stochK: BigInstance;
 }
 
 export interface FasterStochasticResult {

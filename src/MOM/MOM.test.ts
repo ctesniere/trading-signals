@@ -1,5 +1,5 @@
-import {FasterMOM, MOM} from './MOM';
-import {NotEnoughDataError} from '../error';
+import {FasterMOM, MOM} from './MOM.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 describe('MOM', () => {
   describe('getResult', () => {
