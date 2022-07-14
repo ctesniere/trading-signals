@@ -1,4 +1,5 @@
 {
+  "version": "3.6.0",
   "bugs": {
     "url": "https://github.com/ctesniere/trading-signals/issues"
   },
@@ -94,6 +95,5 @@
     "test": "yarn test:dev --coverage",
     "test:dev": "jest ./src",
     "test:types": "yarn lint:types"
-  },
-  "version": "3.6.0"
+  }
 }
