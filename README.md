@@ -1,8 +1,9 @@
 # Trading Signals
 
-![Language Details](https://img.shields.io/github/languages/top/bennycode/trading-signals) ![Code Coverage](https://img.shields.io/codecov/c/github/bennycode/trading-signals/main) ![License](https://img.shields.io/npm/l/trading-signals.svg) ![Package Version](https://img.shields.io/npm/v/trading-signals.svg) ![Dependency Updates](https://img.shields.io/david/bennycode/trading-signals.svg)
+![Language Details](https://img.shields.io/github/languages/top/ctesniere/trading-signals) ![Code Coverage](https://img.shields.io/codecov/c/github/ctesniere/trading-signals/main) ![License](https://img.shields.io/npm/l/trading-signals.svg) ![Package Version](https://img.shields.io/npm/v/trading-signals.svg) ![Dependency Updates](https://img.shields.io/david/bennycode/trading-signals.svg)
 
-Technical indicators and overlays to run technical analysis with JavaScript / TypeScript.
+Technical indicators and overlays to run technical analysis with Deno.  
+Fork https://github.com/bennycode/trading-signals
 
 ## Motivation
 

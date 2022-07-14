@@ -1,27 +1,28 @@
-import {getFasterAverage, getAverage} from './getAverage';
+import {asserts} from '../../deps.test.ts';
+import {getFasterAverage, getAverage} from './getAverage.ts';
 
-describe('getAverage', () => {
-  it('does not fail when entering an empty array', () => {
+Deno.test('getAverage', async t => {
+  await t.step('does not fail when entering an empty array', () => {
     const average = getAverage([]);
-    expect(average.valueOf()).toBe('0');
+    asserts.assertEquals(average.valueOf(), '0');
   });
 
-  it('returns the average of all given prices', () => {
+  await t.step('returns the average of all given prices', () => {
     const prices = [20, 30, 40];
     const average = getAverage(prices);
-    expect(average.valueOf()).toBe('30');
+    asserts.assertEquals(average.valueOf(), '30');
   });
 });
 
-describe('getFasterAverage', () => {
-  it('does not fail when entering an empty array', () => {
+Deno.test('getFasterAverage', async t => {
+  await t.step('does not fail when entering an empty array', () => {
     const average = getFasterAverage([]);
-    expect(average).toBe(0);
+    asserts.assertEquals(average, 0);
   });
 
-  it('only works with the primitive data type number', () => {
+  await t.step('only works with the primitive data type number', () => {
     const prices = [20, 30, 40];
     const average = getFasterAverage(prices);
-    expect(average).toBe(30);
+    asserts.assertEquals(average, 30);
   });
 });

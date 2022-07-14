@@ -1,8 +1,9 @@
-import {getMinimum} from './getMinimum';
+import {asserts} from '../../deps.test.ts';
+import {getMinimum} from './getMinimum.ts';
 
-describe('getMinimum', () => {
-  it('returns the lowest from all given values', () => {
+Deno.test('getMinimum', async t => {
+  await t.step('returns the lowest from all given values', () => {
     const minimum = getMinimum([4, 5, 1, 9, 7, 8]);
-    expect(minimum.valueOf()).toBe('1');
+    asserts.assertEquals(minimum.valueOf(), '1');
   });
 });

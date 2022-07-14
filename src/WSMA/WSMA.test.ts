@@ -1,9 +1,10 @@
+import {asserts} from '../../deps.test.ts';
 import {FasterWSMA, WSMA} from './WSMA.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-describe('WSMA', () => {
-  describe('getResult', () => {
-    it('calculates the WSMA based on a SMA', () => {
+Deno.test('WSMA', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the WSMA based on a SMA', () => {
       // Test data verified with:
       // https://runkit.com/anandaravindan/wema
       const prices = [11, 12, 13, 14, 15, 16, 18, 19, 22, 23, 23];
@@ -14,14 +15,14 @@ describe('WSMA', () => {
         wsma.update(price);
         if (wsma.isStable) {
           const expected = expectations.shift();
-          expect(wsma.getResult().toFixed(2)).toBe(expected!);
+          asserts.assertEquals(wsma.getResult().toFixed(2), expected!);
         }
       }
 
-      expect(wsma.getResult().toFixed(2)).toBe('18.97');
+      asserts.assertEquals(wsma.getResult().toFixed(2), '18.97');
     });
 
-    it('is compatible with results from Tulip Indicators (TI)', () => {
+    await t.step('is compatible with results from Tulip Indicators (TI)', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/atoz.txt#L299-L302
       const prices = [
@@ -36,57 +37,57 @@ describe('WSMA', () => {
         fasterWSMA.update(price);
         if (wsma.isStable && fasterWSMA.isStable) {
           const expected = expectations.shift();
-          expect(wsma.getResult().toFixed(4)).toBe(expected!);
-          expect(fasterWSMA.getResult().toFixed(4)).toBe(expected!);
+          asserts.assertEquals(wsma.getResult().toFixed(4), expected!);
+          asserts.assertEquals(fasterWSMA.getResult().toFixed(4), expected!);
         }
       }
 
-      expect(wsma.isStable).toBe(true);
-      expect(fasterWSMA.isStable).toBe(true);
+      asserts.assertEquals(wsma.isStable, true);
+      asserts.assertEquals(fasterWSMA.isStable, true);
 
-      expect(wsma.getResult().toFixed(4)).toBe('62.8540');
-      expect(fasterWSMA.getResult().toFixed(4)).toBe('62.8540');
+      asserts.assertEquals(wsma.getResult().toFixed(4), '62.8540');
+      asserts.assertEquals(fasterWSMA.getResult().toFixed(4), '62.8540');
 
-      expect(wsma.highest!.toFixed(4)).toBe('63.2739');
-      expect(fasterWSMA.highest!.toFixed(4)).toBe('63.2739');
+      asserts.assertEquals(wsma.highest!.toFixed(4), '63.2739');
+      asserts.assertEquals(fasterWSMA.highest!.toFixed(4), '63.2739');
 
-      expect(wsma.lowest!.toFixed(4)).toBe('62.8540');
-      expect(fasterWSMA.lowest!.toFixed(4)).toBe('62.8540');
+      asserts.assertEquals(wsma.lowest!.toFixed(4), '62.8540');
+      asserts.assertEquals(fasterWSMA.lowest!.toFixed(4), '62.8540');
     });
 
-    it('throws an error when there is no input data', () => {
+    await t.step('throws an error when there is no input data', () => {
       const wsma = new WSMA(3);
 
       try {
         wsma.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const wsma = new WSMA(3);
       wsma.update(1);
       wsma.update(2);
 
       try {
         wsma.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });
 
-  describe('isStable', () => {
-    it('is stable when the inputs can fill the signal interval', () => {
+  await t.step('isStable', async t => {
+    await t.step('is stable when the inputs can fill the signal interval', () => {
       const wsma = new WSMA(3);
       wsma.update(1);
       wsma.update(2);
-      expect(wsma.isStable).toBe(false);
+      asserts.assertEquals(wsma.isStable, false);
       wsma.update(3);
-      expect(wsma.isStable).toBe(true);
+      asserts.assertEquals(wsma.isStable, true);
     });
   });
 });

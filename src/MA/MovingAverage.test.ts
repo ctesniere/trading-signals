@@ -1,4 +1,6 @@
-import {FasterMovingAverage} from './MovingAverage';
+import {asserts} from '../../deps.test.ts';
+import {FasterMovingAverage} from './MovingAverage.ts';
+import {NotEnoughDataError} from '../error/index.ts';
 
 class MyAverage extends FasterMovingAverage {
   iterations = 0;
@@ -14,14 +16,21 @@ class MyAverage extends FasterMovingAverage {
   }
 }
 
-describe('FasterMovingAverage', () => {
-  it('can be used to implement custom average calculations based on primitive numbers', () => {
+Deno.test('FasterMovingAverage', async t => {
+  await t.step('can be used to implement custom average calculations based on primitive numbers', () => {
     const average = new MyAverage(Infinity);
-    expect(average.isStable).toBe(false);
-    expect(() => average.getResult()).toThrowError();
+    asserts.assertEquals(average.isStable, false);
+
+    try {
+      average.getResult();
+      asserts.fail('Expected error');
+    } catch (error) {
+      asserts.assertEquals(error instanceof NotEnoughDataError, true);
+    }
+
     average.update(50);
     average.update(100);
     const result = average.getResult();
-    expect(result).toBe(75);
+    asserts.assertEquals(result, 75);
   });
 });

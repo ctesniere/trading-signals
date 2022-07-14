@@ -1,9 +1,10 @@
-import {BollingerBands, FasterBollingerBands} from '../BBANDS/BollingerBands';
-import {BollingerBandsWidth, FasterBollingerBandsWidth} from './BollingerBandsWidth';
+import {asserts} from '../../deps.test.ts';
+import {BollingerBands, FasterBollingerBands} from '../BBANDS/BollingerBands.ts';
+import {BollingerBandsWidth, FasterBollingerBandsWidth} from './BollingerBandsWidth.ts';
 
-describe('BollingerBandsWidth', () => {
-  describe('getResult', () => {
-    it('calculates the Bollinger Bands Width (BBW)', () => {
+Deno.test('BollingerBandsWidth', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Bollinger Bands Width (BBW)', () => {
       // eBay Inc. (EBAY) daily stock prices in USD on NASDAQ with CBOE BZX exchange
       const candles = [
         {open: 72.06, high: 72.07, low: 68.08, close: 68.21}, // 2021/07/30
@@ -51,8 +52,8 @@ describe('BollingerBandsWidth', () => {
         fasterBBW.update(close);
         if (bbw.isStable) {
           const expected = expectations.shift()!;
-          expect(bbw.getResult().toFixed(2)).toBe(`${expected}`);
-          expect(fasterBBW.getResult().toFixed(2)).toBe(expected);
+          asserts.assertEquals(bbw.getResult().toFixed(2), `${expected}`);
+          asserts.assertEquals(fasterBBW.getResult().toFixed(2), expected);
         }
       }
     });

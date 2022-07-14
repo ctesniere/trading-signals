@@ -1,6 +1,7 @@
+import {asserts} from '../../deps.test.ts';
 import {FasterTR, TR} from './TR.ts';
 
-describe('TR', () => {
+Deno.test('TR', async t => {
   // Test data verified with:
   // https://tulipindicators.org/tr
   const candles = [
@@ -38,8 +39,8 @@ describe('TR', () => {
     '0.86',
   ];
 
-  describe('getResult', () => {
-    it('calculates the True Range (TR)', () => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the True Range (TR)', () => {
       const tr = new TR();
       const fasterTR = new FasterTR();
       for (const candle of candles) {
@@ -47,21 +48,21 @@ describe('TR', () => {
         fasterTR.update(candle);
         if (tr.isStable && fasterTR.isStable) {
           const expected = expectations.shift();
-          expect(tr.getResult().toFixed(2)).toBe(expected!);
-          expect(fasterTR.getResult().toFixed(2)).toBe(expected!);
+          asserts.assertEquals(tr.getResult().toFixed(2), expected!);
+          asserts.assertEquals(fasterTR.getResult().toFixed(2), expected!);
         }
       }
-      expect(tr.isStable).toBe(true);
-      expect(fasterTR.isStable).toBe(true);
+      asserts.assertEquals(tr.isStable, true);
+      asserts.assertEquals(fasterTR.isStable, true);
 
-      expect(tr.getResult().toFixed(2)).toBe('0.86');
-      expect(fasterTR.getResult().toFixed(2)).toBe('0.86');
+      asserts.assertEquals(tr.getResult().toFixed(2), '0.86');
+      asserts.assertEquals(fasterTR.getResult().toFixed(2), '0.86');
 
-      expect(tr.lowest?.toFixed(2)).toBe('0.65');
-      expect(fasterTR.lowest?.toFixed(2)).toBe('0.65');
+      asserts.assertEquals(tr.lowest?.toFixed(2), '0.65');
+      asserts.assertEquals(fasterTR.lowest?.toFixed(2), '0.65');
 
-      expect(tr.highest?.toFixed(2)).toBe('2.00');
-      expect(fasterTR.highest?.toFixed(2)).toBe('2.00');
+      asserts.assertEquals(tr.highest?.toFixed(2), '2.00');
+      asserts.assertEquals(fasterTR.highest?.toFixed(2), '2.00');
     });
   });
 });

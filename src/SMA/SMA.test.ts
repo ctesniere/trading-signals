@@ -1,42 +1,44 @@
-import Big from 'big.js';
-import {NotEnoughDataError, SMA, FasterSMA} from '..';
+import {asserts} from '../../deps.test.ts';
+import Big from '../../deps.ts';
+import {SMA, FasterSMA} from '../index.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
-describe('SMA', () => {
-  describe('prices', () => {
-    it('does not cache more prices than necessary to fill the interval', () => {
+Deno.test('SMA', async t => {
+  await t.step('prices', async t => {
+    await t.step('does not cache more prices than necessary to fill the interval', () => {
       const sma = new SMA(3);
       sma.update(1);
       sma.update(2);
-      expect(sma.prices.length).toBe(2);
+      asserts.assertEquals(sma.prices.length, 2);
       sma.update(3);
-      expect(sma.prices.length).toBe(3);
+      asserts.assertEquals(sma.prices.length, 3);
       sma.update(4);
-      expect(sma.prices.length).toBe(3);
+      asserts.assertEquals(sma.prices.length, 3);
       sma.update(5);
-      expect(sma.prices.length).toBe(3);
+      asserts.assertEquals(sma.prices.length, 3);
       sma.update(6);
-      expect(sma.prices.length).toBe(3);
+      asserts.assertEquals(sma.prices.length, 3);
     });
   });
 
-  describe('isStable', () => {
-    it('knows when there is enough input data', () => {
+  await t.step('isStable', async t => {
+    await t.step('knows when there is enough input data', () => {
       const sma = new SMA(3);
       sma.update(40);
       sma.update(30);
-      expect(sma.isStable).toBe(false);
+      asserts.assertEquals(sma.isStable, false);
       sma.update(20);
-      expect(sma.isStable).toBe(true);
+      asserts.assertEquals(sma.isStable, true);
       sma.update('10');
       sma.update(new Big(30));
-      expect(sma.getResult().valueOf()).toBe('20');
-      expect(sma.lowest!.toFixed(2)).toBe('20.00');
-      expect(sma.highest!.toFixed(2)).toBe('30.00');
+      asserts.assertEquals(sma.getResult().valueOf(), '20');
+      asserts.assertEquals(sma.lowest!.toFixed(2), '20.00');
+      asserts.assertEquals(sma.highest!.toFixed(2), '30.00');
     });
   });
 
-  describe('getResult', () => {
-    it('calculates the moving average based on the last 5 prices', () => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the moving average based on the last 5 prices', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/untest.txt#L359-L361
       const prices = [
@@ -64,49 +66,49 @@ describe('SMA', () => {
 
         if (result && fasterResult) {
           const expected = expectations.shift()!;
-          expect(result.toFixed(3)).toBe(expected);
-          expect(fasterResult.toFixed(3)).toBe(expected);
+          asserts.assertEquals(result.toFixed(3), expected);
+          asserts.assertEquals(fasterResult.toFixed(3), expected);
         }
       }
 
-      expect(sma.isStable).toBe(true);
-      expect(fasterSMA.isStable).toBe(true);
+      asserts.assertEquals(sma.isStable, true);
+      asserts.assertEquals(fasterSMA.isStable, true);
 
-      expect(sma.getResult().toFixed(3)).toBe('86.804');
-      expect(fasterSMA.getResult()).toBe(86.804);
+      asserts.assertEquals(sma.getResult().toFixed(3), '86.804');
+      asserts.assertEquals(fasterSMA.getResult(), 86.804);
 
-      expect(sma.highest!.toFixed(2)).toBe('86.80');
-      expect(fasterSMA.highest!.toFixed(2)).toBe('86.80');
+      asserts.assertEquals(sma.highest!.toFixed(2), '86.80');
+      asserts.assertEquals(fasterSMA.highest!.toFixed(2), '86.80');
 
-      expect(sma.lowest!.toFixed(2)).toBe('82.43');
-      expect(fasterSMA.lowest!.toFixed(2)).toBe('82.43');
+      asserts.assertEquals(sma.lowest!.toFixed(2), '82.43');
+      asserts.assertEquals(fasterSMA.lowest!.toFixed(2), '82.43');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const sma = new SMA(26);
 
       try {
         sma.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
 
       const fasterSMA = new FasterSMA(5);
 
       try {
         fasterSMA.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });
 
-  describe('getResultFromBatch', () => {
-    it("doesn't crash when the array is empty", () => {
+  await t.step('getResultFromBatch', async t => {
+    await t.step("doesn't crash when the array is empty", () => {
       const result = SMA.getResultFromBatch([]);
-      expect(result.valueOf()).toBe('0');
+      asserts.assertEquals(result.valueOf(), '0');
     });
   });
 });

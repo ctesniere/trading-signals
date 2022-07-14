@@ -1,26 +1,27 @@
-import {FasterPeriod, Period} from './Period';
+import {asserts} from '../../deps.test.ts';
+import {FasterPeriod, Period} from './Period.ts';
 
-describe('Period', () => {
-  describe('getResult', () => {
-    it('returns the highest and lowest value of the current period', () => {
+Deno.test('Period', async t => {
+  await t.step('getResult', async t => {
+    await t.step('returns the highest and lowest value of the current period', () => {
       const period = new Period(2);
       period.update(72);
       period.update(1337);
       const {highest, lowest} = period.getResult();
-      expect(lowest.valueOf()).toBe('72');
-      expect(highest.valueOf()).toBe('1337');
+      asserts.assertEquals(lowest.valueOf(), '72');
+      asserts.assertEquals(highest.valueOf(), '1337');
 
       const fasterPeriod = new FasterPeriod(2);
       fasterPeriod.update(72);
       fasterPeriod.update(1337);
       const {highest: fastestHighest, lowest: fastestLowest} = fasterPeriod.getResult();
-      expect(fastestLowest).toBe(72);
-      expect(fastestHighest).toBe(1337);
+      asserts.assertEquals(fastestLowest, 72);
+      asserts.assertEquals(fastestHighest, 1337);
     });
   });
 
-  describe('isStable', () => {
-    it('returns the lowest and highest value during the period when it is stable', () => {
+  await t.step('isStable', async t => {
+    await t.step('returns the lowest and highest value during the period when it is stable', () => {
       // Test data verified with:
       // https://tulipindicators.org/min
       const prices = [
@@ -46,12 +47,12 @@ describe('Period', () => {
         fasterPeriod.update(price);
         if (period.isStable) {
           const expected = lowest.shift();
-          expect(period.lowest?.toFixed(2)).toBe(expected);
-          expect(fasterPeriod.lowest?.toFixed(2)).toBe(expected);
+          asserts.assertEquals(period.lowest?.toFixed(2), expected);
+          asserts.assertEquals(fasterPeriod.lowest?.toFixed(2), expected);
         }
       }
-      expect(period.highest?.toFixed(2)).toBe('87.77');
-      expect(fasterPeriod.highest?.toFixed(2)).toBe('87.77');
+      asserts.assertEquals(period.highest?.toFixed(2), '87.77');
+      asserts.assertEquals(fasterPeriod.highest?.toFixed(2), '87.77');
     });
   });
 });

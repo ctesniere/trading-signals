@@ -1,8 +1,9 @@
+import {asserts} from '../../deps.test.ts';
 import {ADX, FasterADX} from './ADX.ts';
 
-describe('ADX', () => {
-  describe('getResult', () => {
-    it('calculates the Average Directional Index (ADX)', () => {
+Deno.test('ADX', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Average Directional Index (ADX)', () => {
       // Test data verified with:
       // https://tulipindicators.org/adx
       const candles = [
@@ -33,32 +34,32 @@ describe('ADX', () => {
         fasterADX.update(candle);
         if (adx.isStable && fasterADX.isStable) {
           const expected = expectations.shift();
-          expect(adx.getResult().toFixed(2)).toBe(`${expected}`);
-          expect(fasterADX.getResult().toFixed(2)).toBe(`${expected}`);
+          asserts.assertEquals(adx.getResult().toFixed(2), `${expected}`);
+          asserts.assertEquals(fasterADX.getResult().toFixed(2), `${expected}`);
         }
       }
 
-      expect(adx.isStable).toBe(true);
-      expect(fasterADX.isStable).toBe(true);
+      asserts.assertEquals(adx.isStable, true);
+      asserts.assertEquals(fasterADX.isStable, true);
 
-      expect(adx.getResult().toFixed(2)).toBe('67.36');
-      expect(fasterADX.getResult().toFixed(2)).toBe('67.36');
+      asserts.assertEquals(adx.getResult().toFixed(2), '67.36');
+      asserts.assertEquals(fasterADX.getResult().toFixed(2), '67.36');
 
-      expect(adx.lowest!.toFixed(2)).toBe('41.38');
-      expect(fasterADX.lowest!.toFixed(2)).toBe('41.38');
+      asserts.assertEquals(adx.lowest!.toFixed(2), '41.38');
+      asserts.assertEquals(fasterADX.lowest!.toFixed(2), '41.38');
 
-      expect(adx.highest!.toFixed(2)).toBe('67.36');
-      expect(fasterADX.highest!.toFixed(2)).toBe('67.36');
+      asserts.assertEquals(adx.highest!.toFixed(2), '67.36');
+      asserts.assertEquals(fasterADX.highest!.toFixed(2), '67.36');
 
       // Verify uptrend detection (+DI > -DI):
-      expect(adx.pdi!.gt(adx.mdi!)).toBe(true);
-      expect(fasterADX.pdi > fasterADX.mdi).toBe(true);
+      asserts.assertEquals(adx.pdi!.gt(adx.mdi!), true);
+      asserts.assertEquals(fasterADX.pdi > fasterADX.mdi, true);
 
-      expect(adx.pdi!.toFixed(2)).toBe('0.42');
-      expect(fasterADX.pdi!.toFixed(2)).toBe('0.42');
+      asserts.assertEquals(adx.pdi!.toFixed(2), '0.42');
+      asserts.assertEquals(fasterADX.pdi!.toFixed(2), '0.42');
 
-      expect(adx.mdi!.toFixed(2)).toBe('0.06');
-      expect(fasterADX.mdi!.toFixed(2)).toBe('0.06');
+      asserts.assertEquals(adx.mdi!.toFixed(2), '0.06');
+      asserts.assertEquals(fasterADX.mdi!.toFixed(2), '0.06');
     });
   });
 });

@@ -1,6 +1,7 @@
-import {Big} from 'big.js';
-import {DEMA, FasterDEMA} from './DEMA';
-import {NotEnoughDataError} from '../error';
+import Big from '../../deps.ts';
+import {asserts} from '../../deps.test.ts';
+import {DEMA, FasterDEMA} from './DEMA.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
 const dema10results = [
   81, 62.157024793388416, 65.1412471825695, 49.61361928829999, 42.570707415663364, 34.597495090487996,
@@ -12,9 +13,9 @@ const dema10results = [
   46.374329400503385, 53.28360623846342, 38.891184741941984,
 ];
 
-describe('DEMA', () => {
-  describe('getResult', () => {
-    it('calculates the DEMA with interval 10', () => {
+Deno.test('DEMA', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the DEMA with interval 10', () => {
       const prices = [
         81, 24, 75, 21, 34, 25, 72, 92, 99, 2, 86, 80, 76, 8, 87, 75, 32, 65, 41, 9, 13, 26, 56, 28, 65, 58, 17, 90, 87,
         86, 99, 3, 70, 1, 27, 9, 92, 68, 9,
@@ -28,42 +29,42 @@ describe('DEMA', () => {
         fasterDEMA.update(price);
         if (dema.isStable) {
           const result = new Big(dema10results[index]);
-          expect(dema.getResult().toPrecision(12)).toEqual(result.toPrecision(12));
-          expect(fasterDEMA.getResult().toPrecision(4)).toEqual(result.toPrecision(4));
+          asserts.assertEquals(dema.getResult().toPrecision(12), result.toPrecision(12));
+          asserts.assertEquals(fasterDEMA.getResult().toPrecision(4), result.toPrecision(4));
         }
       });
 
-      expect(dema.isStable).toBe(true);
-      expect(fasterDEMA.isStable).toBe(true);
+      asserts.assertEquals(dema.isStable, true);
+      asserts.assertEquals(fasterDEMA.isStable, true);
 
-      expect(dema.lowest!.toFixed(2)).toBe('24.89');
-      expect(fasterDEMA.lowest!.toFixed(2)).toBe('24.89');
+      asserts.assertEquals(dema.lowest!.toFixed(2), '24.89');
+      asserts.assertEquals(fasterDEMA.lowest!.toFixed(2), '24.89');
 
-      expect(dema.highest!.toFixed(2)).toBe('83.22');
-      expect(fasterDEMA.highest!.toFixed(2)).toBe('83.22');
+      asserts.assertEquals(dema.highest!.toFixed(2), '83.22');
+      asserts.assertEquals(fasterDEMA.highest!.toFixed(2), '83.22');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const dema = new DEMA(10);
 
       try {
         dema.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });
 
-  describe('isStable', () => {
-    it('is stable when there are enough inputs to fill the interval', () => {
+  await t.step('isStable', async t => {
+    await t.step('is stable when there are enough inputs to fill the interval', () => {
       const dema = new DEMA(2);
-      expect(dema.isStable).toBe(false);
+      asserts.assertEquals(dema.isStable, false);
       dema.update(1);
       dema.update(2);
-      expect(dema.isStable).toBe(true);
-      expect(dema.lowest!.toFixed(2)).toBe('1.00');
-      expect(dema.highest!.toFixed(2)).toBe('1.89');
+      asserts.assertEquals(dema.isStable, true);
+      asserts.assertEquals(dema.lowest!.toFixed(2), '1.00');
+      asserts.assertEquals(dema.highest!.toFixed(2), '1.89');
     });
   });
 });

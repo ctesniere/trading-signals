@@ -1,7 +1,8 @@
+import {asserts} from '../../deps.test.ts';
 import {CCI, FasterCCI} from './CCI.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-describe('CCI', () => {
+Deno.test('CCI', async t => {
   // Test data verified with:
   // https://tulipindicators.org/cci
   const candles = [
@@ -19,8 +20,8 @@ describe('CCI', () => {
   ];
   const expectations = ['166.67', '82.02', '95.50', '130.91', '99.16', '116.34', '71.93'];
 
-  describe('getResult', () => {
-    it('calculates the Commodity Channel Index (CCI)', () => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Commodity Channel Index (CCI)', () => {
       const cci = new CCI(5);
       const fasterCCI = new FasterCCI(5);
       for (const candle of candles) {
@@ -28,42 +29,42 @@ describe('CCI', () => {
         fasterCCI.update(candle);
         if (cci.isStable && fasterCCI.isStable) {
           const expected = expectations.shift();
-          expect(cci.getResult().toFixed(2)).toBe(expected!);
-          expect(fasterCCI.getResult().toFixed(2)).toBe(expected!);
+          asserts.assertEquals(cci.getResult().toFixed(2), expected!);
+          asserts.assertEquals(fasterCCI.getResult().toFixed(2), expected!);
         }
       }
       const actual = cci.getResult().toFixed(2);
-      expect(actual).toBe('71.93');
+      asserts.assertEquals(actual, '71.93');
     });
 
-    it("stores the highest and lowest result throughout the indicator's lifetime", () => {
+    await t.step("stores the highest and lowest result throughout the indicator's lifetime", () => {
       const cci = new CCI(5);
       const fasterCCI = new FasterCCI(5);
       for (const candle of candles) {
         cci.update(candle);
         fasterCCI.update(candle);
       }
-      expect(cci.highest!.toFixed(2)).toBe('166.67');
-      expect(cci.lowest!.toFixed(2)).toBe('71.93');
-      expect(fasterCCI.highest!.toFixed(2)).toBe('166.67');
-      expect(fasterCCI.lowest!.toFixed(2)).toBe('71.93');
+      asserts.assertEquals(cci.highest!.toFixed(2), '166.67');
+      asserts.assertEquals(cci.lowest!.toFixed(2), '71.93');
+      asserts.assertEquals(fasterCCI.highest!.toFixed(2), '166.67');
+      asserts.assertEquals(fasterCCI.lowest!.toFixed(2), '71.93');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const cci = new CCI(5);
       try {
         cci.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
 
       const fasterCCI = new FasterCCI(5);
       try {
         fasterCCI.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

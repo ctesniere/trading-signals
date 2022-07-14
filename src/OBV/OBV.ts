@@ -1,6 +1,7 @@
-import Big from 'big.js';
-import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator';
-import {OpenHighLowCloseVolume, OpenHighLowCloseVolumeNumber} from '../util';
+import type {BigInstance} from '../../deps.ts';
+import Big from '../../deps.ts';
+import {BigIndicatorSeries, NumberIndicatorSeries} from '../Indicator.ts';
+import {OpenHighLowCloseVolume, OpenHighLowCloseVolumeNumber} from '../util/HighLowClose.ts';
 
 /**
  * On-Balance Volume (OBV)
@@ -14,7 +15,7 @@ import {OpenHighLowCloseVolume, OpenHighLowCloseVolumeNumber} from '../util';
 export class OBV extends BigIndicatorSeries<OpenHighLowCloseVolume> {
   public readonly candles: OpenHighLowCloseVolume[] = [];
 
-  override update(candle: OpenHighLowCloseVolume): Big | void {
+  override update(candle: OpenHighLowCloseVolume): BigInstance | void {
     this.candles.push(candle);
 
     if (this.candles.length === 1) {

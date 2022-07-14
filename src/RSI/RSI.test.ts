@@ -2,9 +2,9 @@ import {asserts} from '../../deps.test.ts';
 import {FasterRSI, RSI} from './RSI.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-Deno.test('RSI', async function (t) {
-  await t.step('getResult', async function (t) {
-    await t.step('calculates the relative strength index', function () {
+Deno.test('RSI', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the relative strength index', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/untest.txt#L347-L349
       const prices = [
@@ -47,7 +47,7 @@ Deno.test('RSI', async function (t) {
       asserts.assertEquals(fasterRSI.highest?.toFixed(2), '91.48');
     });
 
-    await t.step('catches division by zero errors', function () {
+    await t.step('catches division by zero errors', () => {
       const rsi = new RSI(2);
       rsi.update(2);
       rsi.update(2);
@@ -61,7 +61,7 @@ Deno.test('RSI', async function (t) {
       asserts.assertEquals(fasterRSI.getResult().valueOf(), 100);
     });
 
-    await t.step('throws an error when there is not enough input data', function () {
+    await t.step('throws an error when there is not enough input data', () => {
       const rsi = new RSI(2);
       rsi.update(0);
       asserts.assertEquals(rsi.isStable, false);

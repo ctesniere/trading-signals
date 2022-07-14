@@ -62,7 +62,7 @@ export class MACD implements Indicator<MACDResult> {
       this.prices.shift();
     }
 
-    if (this.prices.length === this.long.interval) {
+    if (this.prices.length === this.long.interval && short && long) {
       /**
        * Standard MACD is the short (usually 12 periods) EMA less the long (usually 26 periods) EMA. Closing prices are
        * used to form the moving averages.
@@ -75,14 +75,16 @@ export class MACD implements Indicator<MACDResult> {
        */
       const signal = this.signal.update(macd);
 
-      /**
-       * The MACD histogram is calculated as the MACD indicator minus the signal line (usually 9 periods) EMA.
-       */
-      return (this.result = {
-        histogram: macd.sub(signal),
-        macd: macd,
-        signal,
-      });
+      if (signal) {
+        /**
+         * The MACD histogram is calculated as the MACD indicator minus the signal line (usually 9 periods) EMA.
+         */
+        return (this.result = {
+          histogram: macd.sub(signal),
+          macd: macd,
+          signal,
+        });
+      }
     }
   }
 
@@ -127,15 +129,17 @@ export class FasterMACD implements Indicator<FasterMACDResult> {
       this.prices.shift();
     }
 
-    if (this.prices.length === this.long.interval) {
+    if (this.prices.length === this.long.interval && short && long) {
       const macd = short - long;
       const signal = this.signal.update(macd);
 
-      return (this.result = {
-        histogram: macd - signal,
-        macd,
-        signal,
-      });
+      if (signal) {
+        return (this.result = {
+          histogram: macd - signal,
+          macd,
+          signal,
+        });
+      }
     }
   }
 }

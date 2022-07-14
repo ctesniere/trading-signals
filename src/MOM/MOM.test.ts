@@ -1,9 +1,10 @@
+import {asserts} from '../../deps.test.ts';
 import {FasterMOM, MOM} from './MOM.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-describe('MOM', () => {
-  describe('getResult', () => {
-    it('returns the price 5 intervals ago', () => {
+Deno.test('MOM', async t => {
+  await t.step('getResult', async t => {
+    await t.step('returns the price 5 intervals ago', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/untest.txt#L286-L288
       const inputs = [
@@ -19,29 +20,29 @@ describe('MOM', () => {
         if (momentum.isStable && fasterMomentum.isStable) {
           const actual = momentum.getResult().toFixed(3);
           const expected = outputs.shift()!;
-          expect(parseFloat(actual)).toBe(expected);
-          expect(fasterMomentum.getResult().toFixed(2)).toBe(expected.toFixed(2));
+          asserts.assertEquals(parseFloat(actual), expected);
+          asserts.assertEquals(fasterMomentum.getResult().toFixed(2), expected.toFixed(2));
         }
       }
 
-      expect(momentum.isStable).toBe(true);
-      expect(fasterMomentum.isStable).toBe(true);
+      asserts.assertEquals(momentum.isStable, true);
+      asserts.assertEquals(fasterMomentum.isStable, true);
 
-      expect(momentum.lowest!.toFixed(2)).toBe('0.75');
-      expect(fasterMomentum.lowest!.toFixed(2)).toBe('0.75');
+      asserts.assertEquals(momentum.lowest!.toFixed(2), '0.75');
+      asserts.assertEquals(fasterMomentum.lowest!.toFixed(2), '0.75');
 
-      expect(momentum.highest!.toFixed(2)).toBe('3.70');
-      expect(fasterMomentum.highest!.toFixed(2)).toBe('3.70');
+      asserts.assertEquals(momentum.highest!.toFixed(2), '3.70');
+      asserts.assertEquals(fasterMomentum.highest!.toFixed(2), '3.70');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const momentum = new MOM(5);
 
       try {
         momentum.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

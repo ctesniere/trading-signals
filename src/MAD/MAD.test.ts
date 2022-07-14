@@ -1,7 +1,8 @@
-import {FasterMAD, MAD} from './MAD';
-import {NotEnoughDataError} from '../error';
+import {asserts} from '../../deps.test.ts';
+import {FasterMAD, MAD} from './MAD.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
-describe('MAD', () => {
+Deno.test('MAD', async t => {
   // Test data verified with:
   // https://tulipindicators.org/md
   const prices = [
@@ -9,8 +10,8 @@ describe('MAD', () => {
   ];
   const expectations = ['0.88', '0.67', '0.23', '0.39', '0.51', '0.63', '0.67', '0.83', '0.91', '1.02', '0.62'];
 
-  describe('getResult', () => {
-    it('calculates the absolute deviation from the mean over a period', () => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the absolute deviation from the mean over a period', () => {
       // Test data verified with:
       // https://en.wikipedia.org/wiki/Average_absolute_deviation#Mean_absolute_deviation_around_a_central_point
       const prices = [2, 2, 3, 4, 14];
@@ -21,11 +22,11 @@ describe('MAD', () => {
         fasterMAD.update(price);
       }
       const actual = mad.getResult().valueOf();
-      expect(actual).toBe('3.6');
-      expect(fasterMAD.getResult().valueOf()).toBe(3.6);
+      asserts.assertEquals(actual, '3.6');
+      asserts.assertEquals(fasterMAD.getResult().valueOf(), 3.6);
     });
 
-    it('is compatible with results from Tulip Indicators (TI)', () => {
+    await t.step('is compatible with results from Tulip Indicators (TI)', () => {
       const mad = new MAD(5);
       const fasterMAD = new FasterMAD(5);
       for (const price of prices) {
@@ -33,67 +34,67 @@ describe('MAD', () => {
         fasterMAD.update(price);
         if (mad.isStable && fasterMAD.isStable) {
           const expected = expectations.shift()!;
-          expect(mad.getResult().toFixed(2)).toBe(expected);
-          expect(fasterMAD.getResult().toFixed(2)).toBe(expected);
+          asserts.assertEquals(mad.getResult().toFixed(2), expected);
+          asserts.assertEquals(fasterMAD.getResult().toFixed(2), expected);
         }
       }
-      expect(mad.getResult().toFixed(2)).toBe('0.62');
-      expect(fasterMAD.getResult().toFixed(2)).toBe('0.62');
+      asserts.assertEquals(mad.getResult().toFixed(2), '0.62');
+      asserts.assertEquals(fasterMAD.getResult().toFixed(2), '0.62');
     });
 
-    it("stores the highest and lowest result throughout the indicator's lifetime", () => {
+    await t.step("stores the highest and lowest result throughout the indicator's lifetime", () => {
       const mad = new MAD(5);
       const fasterMAD = new FasterMAD(5);
       for (const price of prices) {
         mad.update(price);
         fasterMAD.update(price);
       }
-      expect(mad.highest!.valueOf()).toBe('1.0184');
-      expect(mad.lowest!.valueOf()).toBe('0.2288');
-      expect(fasterMAD.highest!.toFixed(4)).toBe('1.0184');
-      expect(fasterMAD.lowest!.toFixed(4)).toBe('0.2288');
+      asserts.assertEquals(mad.highest!.valueOf(), '1.0184');
+      asserts.assertEquals(mad.lowest!.valueOf(), '0.2288');
+      asserts.assertEquals(fasterMAD.highest!.toFixed(4), '1.0184');
+      asserts.assertEquals(fasterMAD.lowest!.toFixed(4), '0.2288');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const mad = new MAD(5);
       try {
         mad.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
       }
 
       const fasterMAD = new FasterMAD(5);
       try {
         fasterMAD.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
       }
     });
   });
 
-  describe('getResultFromBatch', () => {
-    it("doesn't crash when the array is empty", () => {
+  await t.step('getResultFromBatch', async t => {
+    await t.step("doesn't crash when the array is empty", () => {
       const result = MAD.getResultFromBatch([]);
-      expect(result.valueOf()).toBe('0');
+      asserts.assertEquals(result.valueOf(), '0');
     });
 
-    it('calculates the mean when no mean is given', () => {
+    await t.step('calculates the mean when no mean is given', () => {
       // Test data verified with:
       // https://en.wikipedia.org/wiki/Average_absolute_deviation#Mean_absolute_deviation_around_a_central_point
       const prices = [2, 2, 3, 4, 14];
-      expect(MAD.getResultFromBatch(prices).valueOf()).toBe('3.6');
-      expect(FasterMAD.getResultFromBatch(prices).valueOf()).toBe(3.6);
+      asserts.assertEquals(MAD.getResultFromBatch(prices).valueOf(), '3.6');
+      asserts.assertEquals(FasterMAD.getResultFromBatch(prices).valueOf(), 3.6);
     });
 
-    it('accepts a supplied mean', () => {
+    await t.step('accepts a supplied mean', () => {
       // Test data verified with:
       // https://en.wikipedia.org/wiki/Average_absolute_deviation#Mean_absolute_deviation_around_a_central_point
       const prices = [2, 2, 3, 4, 14];
       const mean = 5;
-      expect(MAD.getResultFromBatch(prices, mean).valueOf()).toBe('3.6');
-      expect(FasterMAD.getResultFromBatch(prices, mean).valueOf()).toBe(3.6);
+      asserts.assertEquals(MAD.getResultFromBatch(prices, mean).valueOf(), '3.6');
+      asserts.assertEquals(FasterMAD.getResultFromBatch(prices, mean).valueOf(), 3.6);
     });
   });
 });

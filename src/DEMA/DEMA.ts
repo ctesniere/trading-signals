@@ -43,10 +43,14 @@ export class FasterDEMA extends NumberIndicatorSeries {
     this.outer = new FasterEMA(interval);
   }
 
-  override update(price: number): number {
+  override update(price: number): number | undefined {
     const innerResult = this.inner.update(price);
-    const outerResult = this.outer.update(innerResult);
-    return this.setResult(innerResult * 2 - outerResult);
+    if (innerResult) {
+      const outerResult = this.outer.update(innerResult);
+      if (outerResult) {
+        return this.setResult(innerResult * 2 - outerResult);
+      }
+    }
   }
 
   override get isStable(): boolean {

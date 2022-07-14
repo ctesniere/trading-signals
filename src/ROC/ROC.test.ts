@@ -1,10 +1,11 @@
 import Big from '../../deps.ts';
+import {asserts} from '../../deps.test.ts';
 import {FasterROC, ROC} from './ROC.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-describe('ROC', () => {
-  describe('getResult', () => {
-    it('identifies an up-trending asset by a positive ROC', () => {
+Deno.test('ROC', async t => {
+  await t.step('getResult', async t => {
+    await t.step('identifies an up-trending asset by a positive ROC', () => {
       // Test data verified with:
       // https://tulipindicators.org/roc
       const prices = [
@@ -25,18 +26,18 @@ describe('ROC', () => {
 
         if (roc.isStable) {
           const expected = expectations.shift()!;
-          expect(roc.getResult().toFixed(2)).toEqual(expected.toFixed(2));
+          asserts.assertEquals(roc.getResult().toFixed(2), expected.toFixed(2));
         }
       }
 
-      expect(roc.lowest!.toFixed(2)).toBe('0.01');
-      expect(fasterROC.lowest!.toFixed(2)).toBe('0.01');
+      asserts.assertEquals(roc.lowest!.toFixed(2), '0.01');
+      asserts.assertEquals(fasterROC.lowest!.toFixed(2), '0.01');
 
-      expect(roc.highest!.toFixed(2)).toBe('0.04');
-      expect(fasterROC.highest!.toFixed(2)).toBe('0.04');
+      asserts.assertEquals(roc.highest!.toFixed(2), '0.04');
+      asserts.assertEquals(fasterROC.highest!.toFixed(2), '0.04');
     });
 
-    it('identifies a down-trending asset by a negative ROC', () => {
+    await t.step('identifies a down-trending asset by a negative ROC', () => {
       const roc = new ROC(5);
 
       const prices = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100];
@@ -45,24 +46,24 @@ describe('ROC', () => {
         roc.update(new Big(price));
       });
 
-      expect(roc.lowest!.toFixed(2)).toBe('-0.83');
-      expect(roc.highest!.toFixed(2)).toBe('-0.50');
+      asserts.assertEquals(roc.lowest!.toFixed(2), '-0.83');
+      asserts.assertEquals(roc.highest!.toFixed(2), '-0.50');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const roc = new ROC(6);
 
       try {
         roc.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });
 
-  describe('isStable', () => {
-    it('returns true when it can return reliable data', () => {
+  await t.step('isStable', async t => {
+    await t.step('returns true when it can return reliable data', () => {
       const interval = 5;
       const indicator = new ROC(interval);
 
@@ -75,12 +76,12 @@ describe('ROC', () => {
         new Big('0.00019205'),
       ];
 
-      expect(mockedPrices.length).toBe(interval + 1);
-      expect(indicator.isStable).toBe(false);
+      asserts.assertEquals(mockedPrices.length, interval + 1);
+      asserts.assertEquals(indicator.isStable, false);
 
       mockedPrices.forEach(price => indicator.update(price));
 
-      expect(indicator.isStable).toBe(true);
+      asserts.assertEquals(indicator.isStable, true);
     });
   });
 });

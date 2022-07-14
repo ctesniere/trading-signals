@@ -1,9 +1,10 @@
+import {asserts} from '../../deps.test.ts';
 import {FasterStochasticOscillator, StochasticOscillator} from './StochasticOscillator.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 
-describe('StochasticOscillator', () => {
-  describe('update', () => {
-    it('calculates the StochasticOscillator', () => {
+Deno.test('StochasticOscillator', async t => {
+  await t.step('update', async t => {
+    await t.step('calculates the StochasticOscillator', () => {
       // Test data verified with:
       // https://tulipindicators.org/stoch
       const candles = [
@@ -38,24 +39,24 @@ describe('StochasticOscillator', () => {
           const stochD = stochDs.shift()!;
           const stochK = stochKs.shift()!;
 
-          expect(stochResult.stochD.toFixed(2)).toEqual(stochD);
-          expect(fasterStochResult.stochD.toFixed(2)).toEqual(stochD);
+          asserts.assertEquals(stochResult.stochD.toFixed(2), stochD);
+          asserts.assertEquals(fasterStochResult.stochD.toFixed(2), stochD);
 
-          expect(stochResult.stochD.toFixed(2)).toEqual(stochD);
-          expect(fasterStochResult.stochK.toFixed(2)).toEqual(stochK);
+          asserts.assertEquals(stochResult.stochD.toFixed(2), stochD);
+          asserts.assertEquals(fasterStochResult.stochK.toFixed(2), stochK);
         }
       }
 
-      expect(stoch.isStable).toBe(true);
-      expect(fasterStoch.isStable).toBe(true);
+      asserts.assertEquals(stoch.isStable, true);
+      asserts.assertEquals(fasterStoch.isStable, true);
 
-      expect(stoch.getResult().stochK.toFixed(2)).toBe('91.09');
-      expect(fasterStoch.getResult().stochK.toFixed(2)).toBe('91.09');
+      asserts.assertEquals(stoch.getResult().stochK.toFixed(2), '91.09');
+      asserts.assertEquals(fasterStoch.getResult().stochK.toFixed(2), '91.09');
     });
   });
 
-  describe('getResult', () => {
-    it('throws an error when there is not enough input data', () => {
+  await t.step('getResult', async t => {
+    await t.step('throws an error when there is not enough input data', () => {
       const stoch = new StochasticOscillator(5, 3, 3);
 
       stoch.update({close: 1, high: 1, low: 1});
@@ -67,22 +68,22 @@ describe('StochasticOscillator', () => {
 
       try {
         stoch.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
 
       const fasterStoch = new FasterStochasticOscillator(5, 3, 3);
 
       try {
         fasterStoch.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
 
-    it('prevents division by zero errors when highest high and lowest low have the same value', () => {
+    await t.step('prevents division by zero errors when highest high and lowest low have the same value', () => {
       const stoch = new StochasticOscillator(5, 3, 3);
       stoch.update({close: 100, high: 100, low: 100});
       stoch.update({close: 100, high: 100, low: 100});
@@ -93,15 +94,15 @@ describe('StochasticOscillator', () => {
       stoch.update({close: 100, high: 100, low: 100});
       stoch.update({close: 100, high: 100, low: 100});
       const result = stoch.update({close: 100, high: 100, low: 100})!;
-      expect(result.stochK.toFixed(2)).toBe('0.00');
-      expect(result.stochD.toFixed(2)).toBe('0.00');
+      asserts.assertEquals(result.stochK.toFixed(2), '0.00');
+      asserts.assertEquals(result.stochD.toFixed(2), '0.00');
 
       const fasterStoch = new FasterStochasticOscillator(1, 2, 2);
       fasterStoch.update({close: 100, high: 100, low: 100});
       fasterStoch.update({close: 100, high: 100, low: 100});
       const {stochK, stochD} = fasterStoch.getResult();
-      expect(stochK.toFixed(2)).toBe('0.00');
-      expect(stochD.toFixed(2)).toBe('0.00');
+      asserts.assertEquals(stochK.toFixed(2), '0.00');
+      asserts.assertEquals(stochD.toFixed(2), '0.00');
     });
   });
 });

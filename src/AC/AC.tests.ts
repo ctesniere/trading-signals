@@ -1,10 +1,11 @@
+import {asserts} from '../../deps.test.ts';
 import {AC, FasterAC} from './AC.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 import {HighLowNumber} from '../util/index.ts';
 
-describe('AC', () => {
-  describe('getResult', () => {
-    it('works with a signal line of SMA(5)', () => {
+Deno.test('AC', async t => {
+  await t.step('getResult', async t => {
+    await t.step('works with a signal line of SMA(5)', () => {
       const ac = new AC(5, 34, 5);
       const fasterAC = new FasterAC(5, 34, 5);
 
@@ -261,30 +262,30 @@ describe('AC', () => {
 
       // Result verified with:
       // https://github.com/jesse-ai/jesse/blob/53297462d48ebf43f9df46ab5005076d25073e5e/tests/test_indicators.py#L14
-      expect(ac.isStable).toBe(true);
-      expect(fasterAC.isStable).toBe(true);
+      asserts.assertEquals(ac.isStable, true);
+      asserts.assertEquals(fasterAC.isStable, true);
 
-      expect(ac.getResult().toFixed(2)).toBe('-21.97');
-      expect(fasterAC.getResult().toFixed(2)).toBe('-21.97');
+      asserts.assertEquals(ac.getResult().toFixed(2), '-21.97');
+      asserts.assertEquals(fasterAC.getResult().toFixed(2), '-21.97');
 
-      expect(ac.momentum.getResult().toFixed(2)).toBe('-9.22');
-      expect(fasterAC.momentum.getResult().toFixed(2)).toBe('-9.22');
+      asserts.assertEquals(ac.momentum.getResult().toFixed(2), '-9.22');
+      asserts.assertEquals(fasterAC.momentum.getResult().toFixed(2), '-9.22');
 
-      expect(ac.lowest!.toFixed(2)).toBe('-21.97');
-      expect(fasterAC.lowest!.toFixed(2)).toBe('-21.97');
+      asserts.assertEquals(ac.lowest!.toFixed(2), '-21.97');
+      asserts.assertEquals(fasterAC.lowest!.toFixed(2), '-21.97');
 
-      expect(ac.highest!.toFixed(2)).toBe('11.65');
-      expect(fasterAC.highest!.toFixed(2)).toBe('11.65');
+      asserts.assertEquals(ac.highest!.toFixed(2), '11.65');
+      asserts.assertEquals(fasterAC.highest!.toFixed(2), '11.65');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const ac = new AC(5, 34, 5);
 
       try {
         ac.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

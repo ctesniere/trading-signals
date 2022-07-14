@@ -1,8 +1,9 @@
-import {DX, FasterDX} from './DX';
+import {asserts} from '../../deps.test.ts';
+import {DX, FasterDX} from './DX.ts';
 
-describe('DX', () => {
-  describe('getResult', () => {
-    it('calculates the Directional Movement Index (DX)', () => {
+Deno.test('DX', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Directional Movement Index (DX)', () => {
       // Test data verified with:
       // https://tulipindicators.org/dx
       const candles = [
@@ -45,25 +46,25 @@ describe('DX', () => {
         fasterDX.update(candle);
         if (dx.isStable && fasterDX.isStable) {
           const expected = expectations.shift()!;
-          expect(dx.getResult().toFixed(2)).toBe(expected);
-          expect(fasterDX.getResult().toFixed(2)).toBe(expected);
+          asserts.assertEquals(dx.getResult().toFixed(2), expected);
+          asserts.assertEquals(fasterDX.getResult().toFixed(2), expected);
         }
       }
 
-      expect(dx.isStable).toBe(true);
-      expect(fasterDX.isStable).toBe(true);
+      asserts.assertEquals(dx.isStable, true);
+      asserts.assertEquals(fasterDX.isStable, true);
 
-      expect(dx.getResult().toFixed(2)).toBe('75.61');
-      expect(fasterDX.getResult().toFixed(2)).toBe('75.61');
+      asserts.assertEquals(dx.getResult().toFixed(2), '75.61');
+      asserts.assertEquals(fasterDX.getResult().toFixed(2), '75.61');
 
-      expect(dx.lowest!.toFixed(2)).toBe('11.09');
-      expect(fasterDX.lowest!.toFixed(2)).toBe('11.09');
+      asserts.assertEquals(dx.lowest!.toFixed(2), '11.09');
+      asserts.assertEquals(fasterDX.lowest!.toFixed(2), '11.09');
 
-      expect(dx.highest!.toFixed(2)).toBe('86.51');
-      expect(fasterDX.highest!.toFixed(2)).toBe('86.51');
+      asserts.assertEquals(dx.highest!.toFixed(2), '86.51');
+      asserts.assertEquals(fasterDX.highest!.toFixed(2), '86.51');
     });
 
-    it('returns zero when there is no trend', () => {
+    await t.step('returns zero when there is no trend', () => {
       const candles = [
         {close: 95, high: 100, low: 90},
         {close: 95, high: 100, low: 90},
@@ -80,11 +81,11 @@ describe('DX', () => {
         fasterDX.update(candle);
       }
 
-      expect(dx.isStable).toBe(true);
-      expect(fasterDX.isStable).toBe(true);
+      asserts.assertEquals(dx.isStable, true);
+      asserts.assertEquals(fasterDX.isStable, true);
 
-      expect(dx.getResult().valueOf()).toBe('0');
-      expect(fasterDX.getResult().valueOf()).toBe(0);
+      asserts.assertEquals(dx.getResult().valueOf(), '0');
+      asserts.assertEquals(fasterDX.getResult().valueOf(), 0);
     });
   });
 });

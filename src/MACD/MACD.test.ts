@@ -1,10 +1,12 @@
-import {FasterMACD, MACD} from './MACD';
-import Big from 'big.js';
-import {DEMA, EMA, FasterEMA, NotEnoughDataError} from '..';
+import Big from '../../deps.ts';
+import {asserts} from '../../deps.test.ts';
+import {FasterMACD, MACD} from './MACD.ts';
+import {DEMA, EMA, FasterEMA} from '../index.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
-describe('MACD', () => {
-  describe('getResult', () => {
-    it('is compatible with results from Tulip Indicators (TI)', () => {
+Deno.test('MACD', async t => {
+  await t.step('getResult', async t => {
+    await t.step('is compatible with results from Tulip Indicators (TI)', () => {
       // Test data verified with:
       // https://tulipindicators.org/macd
       const prices = [
@@ -88,22 +90,22 @@ describe('MACD', () => {
           const result = macd.getResult();
           const fasterResult = fasterMACD.getResult();
 
-          expect(result.macd.toFixed(2)).toBe(expectedMacd);
-          expect(fasterResult.macd.toFixed(2)).toBe(expectedMacd);
+          asserts.assertEquals(result.macd.toFixed(2), expectedMacd);
+          asserts.assertEquals(fasterResult.macd.toFixed(2), expectedMacd);
 
-          expect(result.signal.toFixed(2)).toBe(expectedMacdSignal);
-          expect(fasterResult.signal.toFixed(2)).toBe(expectedMacdSignal);
+          asserts.assertEquals(result.signal.toFixed(2), expectedMacdSignal);
+          asserts.assertEquals(fasterResult.signal.toFixed(2), expectedMacdSignal);
 
-          expect(result.histogram.toFixed(2)).toBe(expectedMacdHistogram);
-          expect(fasterResult.histogram.toFixed(2)).toBe(expectedMacdHistogram);
+          asserts.assertEquals(result.histogram.toFixed(2), expectedMacdHistogram);
+          asserts.assertEquals(fasterResult.histogram.toFixed(2), expectedMacdHistogram);
         }
       }
 
-      expect(macd.isStable).toBe(true);
-      expect(fasterMACD.isStable).toBe(true);
+      asserts.assertEquals(macd.isStable, true);
+      asserts.assertEquals(fasterMACD.isStable, true);
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const macd = new MACD({
         indicator: DEMA,
         longInterval: 26,
@@ -113,24 +115,24 @@ describe('MACD', () => {
 
       try {
         macd.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
       }
 
       const fasterMACD = new FasterMACD(new FasterEMA(12), new FasterEMA(26), new FasterEMA(9));
 
       try {
         fasterMACD.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
       }
     });
   });
 
-  describe('isStable', () => {
-    it('knows when it can return reliable data', () => {
+  await t.step('isStable', async t => {
+    await t.step('knows when it can return reliable data', () => {
       const longInterval = 18;
       const macd = new MACD({
         indicator: EMA,
@@ -160,12 +162,12 @@ describe('MACD', () => {
         new Big('0.00019207'),
       ];
 
-      expect(mockedPrices.length).toBe(longInterval);
-      expect(macd.isStable).toBe(false);
+      asserts.assertEquals(mockedPrices.length, longInterval);
+      asserts.assertEquals(macd.isStable, false);
 
       mockedPrices.forEach(price => macd.update(price));
 
-      expect(macd.isStable).toBe(true);
+      asserts.assertEquals(macd.isStable, true);
     });
   });
 });

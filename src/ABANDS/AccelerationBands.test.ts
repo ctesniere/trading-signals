@@ -5,17 +5,18 @@ import {SMA} from '../SMA/SMA.ts';
 import {EMA} from '../EMA/EMA.ts';
 import {HighLowCloseNumber} from '../util/index.ts';
 
-Deno.test('AccelerationBands', async function (t) {
-  await t.step('constructor', async function (t) {
-    await t.step('works with different kinds of indicators', () => {
+Deno.test('AccelerationBands', async t => {
+  await t.step('constructor', async t => {
+    await t.step('worksrc/ABANDS/AccelerationBands.test.tss with different kinds of indicators', () => {
       const accBandsWithSMA = new AccelerationBands(20, 2, SMA);
       const accBandsWithEMA = new AccelerationBands(20, 2, EMA);
       asserts.assertExists(accBandsWithSMA);
       asserts.assertExists(accBandsWithEMA);
     });
   });
-  await t.step('getResult', async function (t) {
-    await t.step('returns upper, middle and lower bands', function () {
+
+  await t.step('getResult', async t => {
+    await t.step('returns upper, middle and lower bands', () => {
       const accBands = new AccelerationBands(20, 4);
 
       asserts.assertEquals(accBands.isStable, false);
@@ -80,7 +81,7 @@ Deno.test('AccelerationBands', async function (t) {
       asserts.assertEquals(fasterResult.upper.toFixed(4), '201.9392');
     });
 
-    await t.step('throws an error when there is not enough input data', function (t) {
+    await t.step('throws an error when there is not enough input data', () => {
       const accBands = new AccelerationBands(20, 2);
       try {
         accBands.getResult();
@@ -98,8 +99,8 @@ Deno.test('AccelerationBands', async function (t) {
     });
   });
 
-  describe('update', () => {
-    it("doesn't crash when supplying zeroes", () => {
+  await t.step('update', async t => {
+    await t.step("doesn't crash when supplying zeroes", () => {
       const accBands = new AccelerationBands(20, 2);
       return accBands.update({
         high: 0,
@@ -110,8 +111,8 @@ Deno.test('AccelerationBands', async function (t) {
   });
 });
 
-describe('FaserAccelerationBands', () => {
-  it("doesn't crash when supplying zeroes", () => {
+Deno.test('FaserAccelerationBands', async t => {
+  await t.step("doesn't crash when supplying zeroes", () => {
     const accBands = new FasterAccelerationBands(20, 2);
     return accBands.update({
       high: 0,

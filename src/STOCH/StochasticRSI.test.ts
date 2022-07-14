@@ -1,8 +1,9 @@
-import {FasterStochasticRSI, StochasticRSI} from './StochasticRSI';
+import {asserts} from '../../deps.test.ts';
+import {FasterStochasticRSI, StochasticRSI} from './StochasticRSI.ts';
 
-describe('StochasticRSI', () => {
-  describe('getResult', () => {
-    it('calculates the Stochastic RSI', () => {
+Deno.test('StochasticRSI', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Stochastic RSI', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/0bc8dfc46cfc89366bf8cef6dfad1fb6f81b3b7b/tests/untest.txt#L382-L384
       const prices = [
@@ -16,37 +17,37 @@ describe('StochasticRSI', () => {
         const fasterResult = fasterStochRSI.update(price);
         if (result && fasterResult) {
           const expected = expectations.shift();
-          expect(result.toFixed(3)).toBe(expected!);
-          expect(fasterResult.toFixed(3)).toBe(expected!);
+          asserts.assertEquals(result.toFixed(3), expected!);
+          asserts.assertEquals(fasterResult.toFixed(3), expected!);
         }
       }
-      expect(stochRSI.isStable).toBe(true);
-      expect(fasterStochRSI.isStable).toBe(true);
+      asserts.assertEquals(stochRSI.isStable, true);
+      asserts.assertEquals(fasterStochRSI.isStable, true);
 
-      expect(stochRSI.getResult().valueOf()).toBe('0');
-      expect(fasterStochRSI.getResult()).toBe(0);
+      asserts.assertEquals(stochRSI.getResult().valueOf(), '0');
+      asserts.assertEquals(fasterStochRSI.getResult(), 0);
 
-      expect(stochRSI.highest!.valueOf()).toBe('1');
-      expect(fasterStochRSI.highest!.valueOf()).toBe(1);
+      asserts.assertEquals(stochRSI.highest!.valueOf(), '1');
+      asserts.assertEquals(fasterStochRSI.highest!.valueOf(), 1);
 
-      expect(stochRSI.lowest!.valueOf()).toBe('0');
-      expect(fasterStochRSI.lowest!.valueOf()).toBe(0);
+      asserts.assertEquals(stochRSI.lowest!.valueOf(), '0');
+      asserts.assertEquals(fasterStochRSI.lowest!.valueOf(), 0);
     });
 
-    it('catches division by zero errors', () => {
+    await t.step('catches division by zero errors', () => {
       const stochRSI = new StochasticRSI(2);
       stochRSI.update(2);
       stochRSI.update(2);
       stochRSI.update(2);
       stochRSI.update(2);
-      expect(stochRSI.getResult().valueOf()).toBe('100');
+      asserts.assertEquals(stochRSI.getResult().valueOf(), '100');
 
       const fasterStochRSI = new FasterStochasticRSI(2);
       fasterStochRSI.update(2);
       fasterStochRSI.update(2);
       fasterStochRSI.update(2);
       fasterStochRSI.update(2);
-      expect(fasterStochRSI.getResult().valueOf()).toBe(100);
+      asserts.assertEquals(fasterStochRSI.getResult().valueOf(), 100);
     });
   });
 });

@@ -1,7 +1,8 @@
 import {asserts} from '../../deps.test.ts';
-import {EMA, FasterEMA, NotEnoughDataError} from '../index.ts';
+import {EMA, FasterEMA} from '../index.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
-describe('EMA', () => {
+Deno.test('EMA', async function (t) {
   // Test data verified with:
   // https://tulipindicators.org/ema
   const prices = [
@@ -21,8 +22,8 @@ describe('EMA', () => {
     '86.70',
   ];
 
-  describe('getResult', () => {
-    it('calculates the Exponential Moving Average over a period of 5', () => {
+  await t.step('getResult', async function (t) {
+    await t.step('calculates the Exponential Moving Average over a period of 5', async function (t) {
       const ema = new EMA(5);
       const fasterEMA = new FasterEMA(5);
       for (const price of prices) {
@@ -30,33 +31,34 @@ describe('EMA', () => {
         fasterEMA.update(price);
         if (ema.isStable && fasterEMA.isStable) {
           const expected = expectations.shift();
-          expect(ema.getResult().toFixed(2)).toBe(expected!);
-          expect(fasterEMA.getResult().toFixed(2)).toBe(expected!);
+          asserts.assertEquals(ema.getResult().toFixed(2), expected!);
+          asserts.assertEquals(fasterEMA.getResult().toFixed(2), expected!);
         }
       }
-      expect(ema.getResult().toFixed(2)).toBe('86.70');
-      expect(fasterEMA.getResult().toFixed(2)).toBe('86.70');
+
+      asserts.assertEquals('86.70', ema.getResult().toFixed(2));
+      asserts.assertEquals('86.70', fasterEMA.getResult().toFixed(2));
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const ema = new EMA(10);
 
       try {
         ema.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
-        expect(ema.isStable).toBe(false);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
+        asserts.assertEquals(false, ema.isStable);
       }
 
       const fasterEMA = new FasterEMA(10);
 
       try {
         fasterEMA.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
-        expect(fasterEMA.isStable).toBe(false);
+        asserts.assertEquals(true, error instanceof NotEnoughDataError);
+        asserts.assertEquals(false, fasterEMA.isStable);
       }
     });
   });

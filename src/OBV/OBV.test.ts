@@ -1,9 +1,10 @@
-import {FasterOBV, OBV} from './OBV';
-import {NotEnoughDataError} from '../error';
+import {asserts} from '../../deps.test.ts';
+import {FasterOBV, OBV} from './OBV.ts';
+import {NotEnoughDataError} from '../error/NotEnoughDataError.ts';
 
-describe('OBV', () => {
-  describe('getResult', () => {
-    it('calculates the relative strength index', () => {
+Deno.test('OBV', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the relative strength index', () => {
       // Test data verified with:
       // https://www.investopedia.com/terms/o/onbalancevolume.asp#mntl-sc-block_1-0-27
       const prices = [10, 10.15, 10.17, 10.13, 10.11, 10.15, 10.2, 10.2, 10.22, 10.21];
@@ -33,32 +34,32 @@ describe('OBV', () => {
         fasterOBV.update(candle);
         if (obv.isStable && fasterOBV.isStable) {
           const expected = expectations.shift();
-          expect(obv.getResult().toFixed(3)).toBe(expected!);
-          expect(fasterOBV.getResult().toFixed(3)).toBe(expected!);
+          asserts.assertEquals(obv.getResult().toFixed(3), expected!);
+          asserts.assertEquals(fasterOBV.getResult().toFixed(3), expected!);
         }
       }
-      expect(obv.isStable).toBe(true);
-      expect(fasterOBV.isStable).toBe(true);
+      asserts.assertEquals(obv.isStable, true);
+      asserts.assertEquals(fasterOBV.isStable, true);
 
-      expect(obv.getResult().toFixed(2)).toBe('72100.00');
-      expect(fasterOBV.getResult().toFixed(2)).toBe('72100.00');
+      asserts.assertEquals(obv.getResult().toFixed(2), '72100.00');
+      asserts.assertEquals(fasterOBV.getResult().toFixed(2), '72100.00');
 
-      expect(obv.lowest?.toFixed(2)).toBe('600.00');
-      expect(fasterOBV.lowest?.toFixed(2)).toBe('600.00');
+      asserts.assertEquals(obv.lowest?.toFixed(2), '600.00');
+      asserts.assertEquals(fasterOBV.lowest?.toFixed(2), '600.00');
 
-      expect(obv.highest?.toFixed(2)).toBe('99600.00');
-      expect(fasterOBV.highest?.toFixed(2)).toBe('99600.00');
+      asserts.assertEquals(obv.highest?.toFixed(2), '99600.00');
+      asserts.assertEquals(fasterOBV.highest?.toFixed(2), '99600.00');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const obv = new OBV();
-      expect(obv.isStable).toBe(false);
+      asserts.assertEquals(obv.isStable, false);
       try {
         obv.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(obv.isStable).toBe(false);
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(obv.isStable, false);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

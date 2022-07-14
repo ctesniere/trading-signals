@@ -1,10 +1,11 @@
-import twoDays from '../test/fixtures/DMA/LTC-USDT-1h-2d.js';
+import {asserts} from '../../deps.test.ts';
+import twoDays from '../test/fixtures/DMA/LTC-USDT-1h-2d.ts';
 import {DMA, FasterDMA} from './DMA.ts';
 import {EMA, SMA} from '../index.ts';
 
-describe('DMA', () => {
-  describe('constructor', () => {
-    it('can be used with simple moving averages', () => {
+Deno.test('DMA', async t => {
+  await t.step('constructor', async t => {
+    await t.step('can be used with simple moving averages', () => {
       const dma = new DMA(3, 6, SMA);
       dma.update(41);
       dma.update(37);
@@ -12,11 +13,11 @@ describe('DMA', () => {
       dma.update(100);
       dma.update(30.71);
       dma.update(30);
-      expect(dma.getResult().short.toFixed(8)).toBe('53.57000000');
-      expect(dma.getResult().long.toFixed(8)).toBe('43.26833333');
+      asserts.assertEquals(dma.getResult().short.toFixed(8), '53.57000000');
+      asserts.assertEquals(dma.getResult().long.toFixed(8), '43.26833333');
     });
 
-    it('can be used with exponential moving averages', () => {
+    await t.step('can be used with exponential moving averages', () => {
       const dma = new DMA(3, 6, EMA);
       dma.update(41);
       dma.update(37);
@@ -24,37 +25,37 @@ describe('DMA', () => {
       dma.update(100);
       dma.update(30.71);
       dma.update(30);
-      expect(dma.getResult().short.toFixed(8)).toBe('38.92125000');
-      expect(dma.getResult().long.toFixed(8)).toBe('41.96735289');
+      asserts.assertEquals(dma.getResult().short.toFixed(8), '38.92125000');
+      asserts.assertEquals(dma.getResult().long.toFixed(8), '41.96735289');
     });
   });
 
-  describe('isStable', () => {
-    it('is dependant on the long interval (SMA)', () => {
+  await t.step('isStable', async t => {
+    await t.step('is dependant on the long interval (SMA)', () => {
       const dma = new DMA(3, 5);
       dma.update(40);
       dma.update(30);
       dma.update(20);
-      expect(dma.isStable).toBe(false);
+      asserts.assertEquals(dma.isStable, false);
       dma.update(10);
       dma.update(30);
-      expect(dma.isStable).toBe(true);
+      asserts.assertEquals(dma.isStable, true);
     });
 
-    it('is dependant on the long interval (EMA)', () => {
+    await t.step('is dependant on the long interval (EMA)', () => {
       const dma = new DMA(3, 5, EMA);
       dma.update(40);
       dma.update(30);
       dma.update(20);
-      expect(dma.isStable).toBe(false);
+      asserts.assertEquals(dma.isStable, false);
       dma.update(10);
       dma.update(30);
-      expect(dma.isStable).toBe(true);
+      asserts.assertEquals(dma.isStable, true);
     });
   });
 
-  describe('getResult', () => {
-    it('detects uptrends', () => {
+  await t.step('getResult', async t => {
+    await t.step('detects uptrends', () => {
       const dma = new DMA(3, 8);
       const fasterDMA = new FasterDMA(3, 8);
       const nineHours = twoDays.slice(0, 9);
@@ -66,11 +67,11 @@ describe('DMA', () => {
       }
 
       const {short, long} = dma.getResult();
-      expect(short.gt(long)).toBe(true);
+      asserts.assertEquals(short.gt(long), true);
 
       const fasterResult = fasterDMA.getResult();
-      expect(fasterDMA.isStable).toBe(true);
-      expect(fasterResult.short > fasterResult.long).toBe(true);
+      asserts.assertEquals(fasterDMA.isStable, true);
+      asserts.assertEquals(fasterResult.short > fasterResult.long, true);
     });
   });
 });

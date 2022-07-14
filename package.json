@@ -1,12 +1,12 @@
 {
   "bugs": {
-    "url": "https://github.com/bennycode/trading-signals/issues"
+    "url": "https://github.com/ctesniere/trading-signals/issues"
   },
   "dependencies": {
     "@types/big.js": "6.1.2",
     "big.js": "6.1.1"
   },
-  "description": "Technical indicators to run technical analysis with JavaScript / TypeScript.",
+  "description": "Technical indicators to run technical analysis with TypeScript.",
   "devDependencies": {
     "@types/benchmark": "2.1.1",
     "@types/jest": "27.4.0",
@@ -70,7 +70,7 @@
   "name": "trading-signals",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bennycode/trading-signals.git"
+    "url": "git+https://github.com/ctesniere/trading-signals.git"
   },
   "scripts": {
     "build": "tsc",

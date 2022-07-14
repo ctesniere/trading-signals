@@ -1,10 +1,11 @@
+import {asserts} from '../../deps.test.ts';
 import {AO, FasterAO} from './AO.ts';
 import {NotEnoughDataError} from '../error/index.ts';
 import {HighLowNumber} from '../util/index.ts';
 
-describe('AO', () => {
-  describe('getResult', () => {
-    it('works with an interval setting of 5/34', () => {
+Deno.test('AO', async t => {
+  await t.step('getResult', async t => {
+    await t.step('works with an interval setting of 5/34', () => {
       // Test data verified with:
       // https://github.com/TulipCharts/tulipindicators/blob/v0.8.0/tests/extra.txt#L17-L20
       const highs = [
@@ -43,30 +44,30 @@ describe('AO', () => {
         const result = ao.update(candle);
         const fasterResult = fasterAO.update(candle);
         if (ao.isStable && fasterAO.isStable) {
-          expect(result).not.toBeUndefined();
-          expect(fasterResult).not.toBeUndefined();
+          asserts.assertNotEquals(result, undefined);
+          asserts.assertNotEquals(fasterResult, undefined);
           const actual = ao.getResult().toFixed(4);
           const expected = aos.shift()!;
-          expect(parseFloat(actual)).toBe(expected);
-          expect(fasterResult!.toFixed(4)).toBe(expected.toFixed(4));
+          asserts.assertEquals(parseFloat(actual), expected);
+          asserts.assertEquals(fasterResult!.toFixed(4), expected.toFixed(4));
         }
       }
 
-      expect(ao.lowest!.toFixed(2)).toBe('-11.50');
-      expect(fasterAO.lowest!.toFixed(2)).toBe('-11.50');
+      asserts.assertEquals(ao.lowest!.toFixed(2), '-11.50');
+      asserts.assertEquals(fasterAO.lowest!.toFixed(2), '-11.50');
 
-      expect(ao.highest!.toFixed(2)).toBe('33.35');
-      expect(fasterAO.highest!.toFixed(2)).toBe('33.35');
+      asserts.assertEquals(ao.highest!.toFixed(2), '33.35');
+      asserts.assertEquals(fasterAO.highest!.toFixed(2), '33.35');
     });
 
-    it('throws an error when there is not enough input data', () => {
+    await t.step('throws an error when there is not enough input data', () => {
       const ao = new AO(5, 34);
 
       try {
         ao.getResult();
-        fail('Expected error');
+        asserts.fail('Expected error');
       } catch (error) {
-        expect(error).toBeInstanceOf(NotEnoughDataError);
+        asserts.assertEquals(error instanceof NotEnoughDataError, true);
       }
     });
   });

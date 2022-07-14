@@ -2,9 +2,9 @@ import {asserts} from '../../deps.test.ts';
 import {ATR, FasterATR} from './ATR.ts';
 import {NotEnoughDataError} from '../index.ts';
 
-Deno.test('ATR', async function (t) {
-  await t.step('getResult', async function (t) {
-    await t.step('calculates the Average True Range (ATR)', async function () {
+Deno.test('ATR', async t => {
+  await t.step('getResult', async t => {
+    await t.step('calculates the Average True Range (ATR)', async () => {
       // Test data verified with:
       // https://tulipindicators.org/atr
       const candles = [
@@ -52,7 +52,7 @@ Deno.test('ATR', async function (t) {
       asserts.assertEquals(fasterATR.highest!.toFixed(2), '1.24');
     });
 
-    await t.step('throws an error when there is not enough input data', async function () {
+    await t.step('throws an error when there is not enough input data', async () => {
       const atr = new ATR(14);
 
       try {
